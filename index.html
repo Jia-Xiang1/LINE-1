@@ -21,8 +21,8 @@
 
     .header {
       background: #fff;
-      border-radius: 16px;
-      padding: 18px;
+      border-radius: 18px;
+      padding: 20px;
       margin-bottom: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,.06);
     }
@@ -37,6 +37,29 @@
     .subtitle {
       font-size: 14px;
       color: #666;
+      line-height: 1.8;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-refresh {
+      background: #fff;
+      border: 1px solid #c9341a33;
+      color: #c9341a;
     }
 
     .section-title {
@@ -74,7 +97,7 @@
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       white-space: nowrap;
     }
 
@@ -115,15 +138,6 @@
       flex-wrap: wrap;
     }
 
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
     .btn-use {
       background: #c9341a;
       color: #fff;
@@ -132,12 +146,6 @@
     .btn-use:disabled {
       background: #bbb;
       cursor: not-allowed;
-    }
-
-    .btn-refresh {
-      background: #fff;
-      border: 1px solid #c9341a33;
-      color: #c9341a;
     }
 
     .empty,
@@ -154,6 +162,13 @@
       margin-top: 8px;
       font-size: 12px;
       color: #888;
+      line-height: 1.7;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #999;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -161,9 +176,14 @@
   <div class="wrap">
     <div class="header">
       <div class="title">🎫 我的優惠券</div>
-      <div class="subtitle">可查看領取日、啟用日、到期日、使用狀態，並由店員確認核銷。</div>
-      <div class="hint">排序方式：依類別分組，同類別內快到期優先。</div>
-      <div class="card-actions">
+      <div class="subtitle">
+        這裡會顯示你已領取的所有優惠券。<br>
+        可查看領取日、啟用日、使用日、到期日與使用狀態。
+      </div>
+      <div class="hint">
+        排序方式：依類別分組；同類別內，快到期且可使用的券會優先顯示。
+      </div>
+      <div class="actions">
         <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
       </div>
     </div>
@@ -173,7 +193,7 @@
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbwd0ViOrwyOy6T_8sz6vuxDLWeekP-KMzkrNqAvnr3pn_YbPU9iI2vr5IWwMRsgmobQ/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbxBsh3bbOKRjVv_M-nGkcergiYVSn215sdNr1j6rO_wyfrBy8NLQGZ0JxyOqlD3c8A/exec";
 
 async function init() {
   try {
@@ -299,6 +319,10 @@ async function loadCoupons() {
                 店員確認使用
               </button>
             </div>
+
+            <div class="small">
+              顧客出示本畫面給店員後，再由店員確認使用。
+            </div>
           </div>
         `;
       });
@@ -314,7 +338,7 @@ async function loadCoupons() {
 
 async function useCoupon(couponId) {
   try {
-    const ok = confirm("請確認已由店員核對後再按下使用。是否確認使用此優惠券？");
+    const ok = confirm("請確認店員已核對後再按下使用。是否確認使用此優惠券？");
     if (!ok) return;
 
     const result = await postToGas({
