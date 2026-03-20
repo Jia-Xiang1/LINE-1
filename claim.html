@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -7,168 +6,332 @@
   <title>領取優惠券</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: #f7f7f7;
       margin: 0;
-      padding: 16px;
+      font-family: "Noto Sans TC", sans-serif;
+      background:
+        radial-gradient(circle at top, #fff7ef 0%, #f8f1e7 35%, #f3eee8 100%);
       color: #2d1500;
+      min-height: 100vh;
+      padding: 20px 14px 28px;
     }
 
     .wrap {
-      max-width: 520px;
+      max-width: 560px;
       margin: 0 auto;
     }
 
-    .card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    .top-deco {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
       margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      padding: 22px 18px 18px;
+      box-shadow:
+        0 10px 30px rgba(86, 45, 10, 0.08),
+        0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(201, 52, 26, 0.08);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .brand-small {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      color: rgba(201, 52, 26, 0.75);
+      margin-bottom: 8px;
+      font-weight: 700;
     }
 
     .title {
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 28px;
+      font-weight: 900;
       color: #c9341a;
       margin-bottom: 8px;
+      line-height: 1.2;
+      text-align: center;
     }
 
     .subtitle {
-      color: #666;
+      text-align: center;
+      color: #6f6259;
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.8;
+      margin-bottom: 18px;
     }
 
     .coupon-box {
-      margin-top: 16px;
-      background: #fff7f2;
-      border: 1px dashed #c9341a66;
-      border-radius: 14px;
-      padding: 16px;
+      position: relative;
+      background:
+        linear-gradient(180deg, #fffaf3 0%, #fff6ec 100%);
+      border: 1.5px dashed rgba(201, 52, 26, 0.45);
+      border-radius: 20px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
     }
 
-    .coupon-name {
-      font-size: 22px;
-      font-weight: 800;
-      color: #c9341a;
-      margin-bottom: 8px;
+    .coupon-box::before,
+    .coupon-box::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      background: #f3eee8;
+      border-radius: 999px;
+      transform: translateY(-50%);
+      box-shadow: inset 0 0 0 1px rgba(201, 52, 26, 0.08);
+    }
+
+    .coupon-box::before {
+      left: -9px;
+    }
+
+    .coupon-box::after {
+      right: -9px;
     }
 
     .category {
       display: inline-block;
       font-size: 12px;
-      font-weight: 700;
-      padding: 6px 10px;
+      font-weight: 800;
+      padding: 7px 12px;
       border-radius: 999px;
-      background: #fff2e8;
+      background: #fff0e7;
       color: #8b1a0a;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(201, 52, 26, 0.1);
+    }
+
+    .coupon-name {
+      font-size: 26px;
+      font-weight: 900;
+      color: #c9341a;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     }
 
     .meta {
       font-size: 14px;
-      color: #444;
-      line-height: 1.9;
+      color: #51463f;
+      line-height: 2;
     }
 
     .meta strong {
       color: #8b1a0a;
+      font-weight: 800;
+    }
+
+    .rule-box {
+      margin: 14px 0 8px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(201, 52, 26, 0.08);
+      padding: 14px 14px 10px;
+    }
+
+    .rule-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #8b1a0a;
+      margin-bottom: 8px;
+    }
+
+    .rule-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #665a53;
+      font-size: 13px;
+      line-height: 1.8;
     }
 
     button {
       width: 100%;
       border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 15px 16px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
-      margin-top: 14px;
+      margin-top: 12px;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    button:active {
+      transform: scale(0.99);
     }
 
     .btn-primary {
-      background: #c9341a;
+      background: linear-gradient(135deg, #c9341a 0%, #8b1a0a 100%);
       color: #fff;
+      box-shadow: 0 8px 18px rgba(201, 52, 26, 0.22);
     }
 
     .btn-secondary {
       background: #fff;
       color: #c9341a;
-      border: 1px solid #c9341a33;
+      border: 1px solid rgba(201, 52, 26, 0.18);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      opacity: 0.95;
     }
 
     .btn-primary:disabled,
     .btn-secondary:disabled {
-      background: #ccc;
+      background: #c9c9c9;
       color: #fff;
       border: none;
       cursor: not-allowed;
-    }
-
-    .result {
-      margin-top: 14px;
-      background: #f9fbf6;
-      border: 1px solid #d7ebd1;
-      border-radius: 12px;
-      padding: 14px;
-      line-height: 1.9;
-      font-size: 14px;
-    }
-
-    .error {
-      margin-top: 14px;
-      background: #fff2f1;
-      border: 1px solid #f3c7c1;
-      border-radius: 12px;
-      padding: 14px;
-      line-height: 1.8;
-      font-size: 14px;
-      color: #b42318;
+      box-shadow: none;
     }
 
     .hint {
       font-size: 12px;
-      color: #888;
-      margin-top: 8px;
+      color: #8b8078;
+      margin-top: 10px;
       line-height: 1.7;
+      text-align: center;
+    }
+
+    .result {
+      margin-top: 16px;
+      background: linear-gradient(180deg, #f6fff7 0%, #eef9ef 100%);
+      border: 1px solid #d6ead6;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.95;
+      font-size: 14px;
+      color: #30553a;
+      box-shadow: 0 4px 10px rgba(74, 132, 87, 0.06);
+    }
+
+    .result strong {
+      color: #1f6f35;
+    }
+
+    .error {
+      margin-top: 16px;
+      background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%);
+      border: 1px solid #f0c9c4;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.8;
+      font-size: 14px;
+      color: #b42318;
+      box-shadow: 0 4px 10px rgba(180, 35, 24, 0.04);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #9b8f87;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 480px) {
+      .title {
+        font-size: 24px;
+      }
+
+      .coupon-name {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 20px 14px 16px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
+    <div class="top-deco"></div>
+
     <div class="card">
-      <div class="title">🎁 領取優惠券</div>
-      <div class="subtitle">
-        請確認店員已核對中獎項目後，再按下領券。
+      <div class="brand">
+        <div class="brand-small">優惠券領取</div>
+        <div class="title">領取你的中獎優惠券</div>
+        <div class="subtitle">
+          請先由店員確認中獎項目，<br />
+          再按下下方按鈕完成領券。
+        </div>
       </div>
 
       <div class="coupon-box">
         <div id="category" class="category">載入中...</div>
         <div id="couponName" class="coupon-name">載入中...</div>
+
         <div class="meta">
           <div><strong>來源：</strong><span id="sourceText">載入中...</span></div>
-          <div><strong>啟用規則：</strong>領取日隔天啟用</div>
-          <div><strong>使用期限：</strong>啟用日後 7 天內</div>
+          <div><strong>狀態：</strong>領取後建立優惠券</div>
         </div>
       </div>
 
-      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()">確認領券</button>
-      <button class="btn-secondary" onclick="goToCouponList()">查看我的優惠券</button>
+      <div class="rule-box">
+        <div class="rule-title">使用規則</div>
+        <ol class="rule-list">
+          <li>領取日隔天起才可使用。</li>
+          <li>啟用日起算 7 天內有效。</li>
+          <li>使用時請出示券包頁面，由店員確認使用。</li>
+        </ol>
+      </div>
+
+      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()">
+        確認領券
+      </button>
+
+      <button class="btn-secondary" onclick="goToCouponList()">
+        前往我的優惠券
+      </button>
 
       <div class="hint">
-        若重複快速點擊，系統可能會擋下同一張券的重複領取。
+        若連續重複點擊，系統可能會阻擋重複領取。
       </div>
 
       <div id="messageArea"></div>
+
+      <div class="footer-note">
+        領券成功後將自動跳轉至我的優惠券頁面
+      </div>
     </div>
   </div>
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbxBsh3bbOKRjVv_M-nGkcergiYVSn215sdNr1j6rO_wyfrBy8NLQGZ0JxyOqlD3c8A/exec";
-const couponListUrl = "https://liff.line.me/2009551865-EGhyWa2w"; // 例如 https://liff.line.me/你的券包LIFF_ID
+const gasUrl = "https://script.google.com/macros/s/AKfycbyv118KiCiMqgHMYMXuuQRQ7RSTP3CxTtRexau2nXb5mIqRDJJBiF9rjfKIvrOrHwOf/exec";
+const couponListUrl = "https://liff.line.me/2009551865-EGhyWa2w";
 
 function getParam(name) {
   const url = new URL(window.location.href);
@@ -237,10 +400,12 @@ async function claimCoupon() {
   try {
     const btn = document.getElementById("claimBtn");
     btn.disabled = true;
+    btn.innerText = "領券處理中...";
 
     const profile = await getProfile();
     if (!profile) {
       btn.disabled = false;
+      btn.innerText = "確認領券";
       return;
     }
 
@@ -256,69 +421,30 @@ async function claimCoupon() {
     if (!result.success) {
       renderError(result.message || "領券失敗");
       btn.disabled = false;
+      btn.innerText = "確認領券";
       return;
     }
 
     renderSuccess(result.item);
     btn.disabled = true;
+    btn.innerText = "已完成領券";
   } catch (err) {
     renderError("領券失敗：" + err.message);
     console.error(err);
-    document.getElementById("claimBtn").disabled = false;
+    const btn = document.getElementById("claimBtn");
+    btn.disabled = false;
+    btn.innerText = "確認領券";
   }
 }
 
 function renderSuccess(item) {
   const html = `
     <div class="result">
-      <div><strong>領券成功</strong></div>
+      <div><strong>領券成功 🎉</strong></div>
       <div><strong>券別：</strong>${escapeHtml(item.coupon)}</div>
       <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
       <div><strong>領取日：</strong>${formatDate(item.claimedAt)}</div>
       <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
       <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
       <div><strong>狀態：</strong>${escapeHtml(item.status)}</div>
-      <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
-
-      <div style="margin-top:14px;">
-        <button class="btn-secondary" onclick="goToCouponList()">
-          前往我的優惠券
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("messageArea").innerHTML = html;
-}
-
-function renderError(message) {
-  document.getElementById("messageArea").innerHTML = `
-    <div class="error">${escapeHtml(message)}</div>
-  `;
-}
-
-function goToCouponList() {
-  if (couponListUrl) {
-    window.location.href = couponListUrl;
-  }
-}
-
-function formatDate(value) {
-  const d = new Date(value);
-  if (isNaN(d.getTime())) return value || "";
-  return d.toLocaleString("zh-TW");
-}
-
-function escapeHtml(str) {
-  return String(str || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-init();
-</script>
-</body>
-</html>
+      <d
