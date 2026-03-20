@@ -331,7 +331,8 @@
 <script>
 const liffId = "2009551865-EGhyWa2w";
 const gasUrl = "https://script.google.com/macros/s/AKfycbyv118KiCiMqgHMYMXuuQRQ7RSTP3CxTtRexau2nXb5mIqRDJJBiF9rjfKIvrOrHwOf/exec";
-const couponListUrl = "https://liff.line.me/2009551865-EGhyWa2w";
+const couponListUrl = "https://liff.line.me/2009551865-e6Y0VCE6";
+let redirectTimer = null;
 
 function getParam(name) {
   const url = new URL(window.location.href);
@@ -463,7 +464,11 @@ function renderSuccess(item) {
 
   document.getElementById("messageArea").innerHTML = html;
 
-  setTimeout(() => {
+  if (redirectTimer) {
+    clearTimeout(redirectTimer);
+  }
+
+  redirectTimer = setTimeout(() => {
     goToCouponList();
   }, 5000);
 }
@@ -475,6 +480,11 @@ function renderError(message) {
 }
 
 function goToCouponList() {
+  if (redirectTimer) {
+    clearTimeout(redirectTimer);
+    redirectTimer = null;
+  }
+
   if (couponListUrl) {
     window.location.href = couponListUrl;
   }
