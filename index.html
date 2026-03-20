@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>優惠券領取</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
   <style>
     body {
       font-family: sans-serif;
@@ -18,34 +17,57 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 420px;
+      margin: 0 auto;
     }
     button {
-      margin-top: 20px;
+      margin-top: 12px;
       padding: 12px 20px;
       border: none;
       background: #06c755;
       color: white;
       font-size: 16px;
       border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .secondary {
+      background: #666;
+    }
+    .danger {
+      background: #d9534f;
+    }
+    #msg, #statusBox {
+      margin-top: 16px;
+      white-space: pre-line;
     }
   </style>
 </head>
-
 <body>
   <div class="card">
-    <h2>🎁 優惠券領取</h2>
+    <h2>🎁 優惠券</h2>
     <p id="coupon">載入中...</p>
-    <button onclick="claim()">立即領取</button>
+
+    <button onclick="claimCoupon()">立即領取</button>
+    <button class="secondary" onclick="checkStatus()">查看是否已使用</button>
+    <button class="danger" onclick="useCoupon()">使用優惠券</button>
+
     <p id="msg"></p>
+    <div id="statusBox"></div>
   </div>
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbyAL87PU9y5cPuBNZyQqRKaPG0Lmj7ZtQyEHd5Lo-sVIIlit3Q9NXe7Ku6z66Le1x3l/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbwtmW4F-8L0_w8pzOBW64vzXCp_PSK5HPWeddLFDYGnQcK4GXXqy5_Huvwu8cxijPE/exec";
 
 function getCoupon() {
   const url = new URL(window.location.href);
   return url.searchParams.get("coupon") || "隨機優惠";
+}
+
+function getSource() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("from") || "QR";
 }
 
 async function init() {
@@ -57,57 +79,121 @@ async function init() {
       return;
     }
 
-    const coupon = getCoupon();
-    document.getElementById("coupon").innerText = "目前券種：" + coupon;
+    document.getElementById("coupon").innerText = "目前券種：" + getCoupon();
+    await checkStatus();
   } catch (error) {
     document.getElementById("msg").innerText = "LIFF 初始化失敗：" + error.message;
     console.error(error);
   }
 }
 
-async function claim() {
+async function getProfile() {
+  if (!liff.isLoggedIn()) {
+    liff.login();
+    return null;
+  }
+  return await liff.getProfile();
+}
+
+async function postToGas(payload) {
+  const formBody = new URLSearchParams(payload).toString();
+
+  const res = await fetch(gasUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formBody
+  });
+
+  const text = await res.text();
+
   try {
-    if (!liff.isLoggedIn()) {
-      liff.login();
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error("伺服器回應格式錯誤：" + text);
+  }
+}
+
+async function claimCoupon() {
+  try {
+    const profile = await getProfile();
+    if (!profile) return;
+
+    const result = await postToGas({
+      action: "claim",
+      userId: profile.userId,
+      name: profile.displayName,
+      coupon: getCoupon(),
+      source: getSource()
+    });
+
+    document.getElementById("msg").innerText = result.message || (result.success ? "領取成功" : "領取失敗");
+    await checkStatus();
+  } catch (error) {
+    document.getElementById("msg").innerText = "❌ 領取失敗：" + error.message;
+    console.error(error);
+  }
+}
+
+async function checkStatus() {
+  try {
+    const profile = await getProfile();
+    if (!profile) return;
+
+    const result = await postToGas({
+      action: "status",
+      userId: profile.userId,
+      coupon: getCoupon()
+    });
+
+    if (!result.found) {
+      document.getElementById("statusBox").innerText = "尚未領取此優惠券";
       return;
     }
 
-    const profile = await liff.getProfile();
-    const coupon = getCoupon();
+    let text = "優惠券：" + result.coupon + "\n";
+    text += "狀態：" + result.status + "\n";
+    text += "領取時間：" + formatDate(result.claimedAt) + "\n";
 
-    const data = {
-      userId: profile.userId,
-      name: profile.displayName,
-      coupon: coupon,
-      source: "QR"
-    };
-
-    const formBody = new URLSearchParams(data).toString();
-
-    const res = await fetch(gasUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: formBody
-    });
-
-    const text = await res.text();
-    console.log("GAS 回傳：", text);
-
-    let result = {};
-    try {
-      result = JSON.parse(text);
-    } catch (e) {
-      result = { success: false, message: text };
+    if (result.usedAt) {
+      text += "使用時間：" + formatDate(result.usedAt);
     }
 
-    document.getElementById("msg").innerText =
-      result.success ? "✅ 領取成功" : "❌ 領取失敗";
+    document.getElementById("statusBox").innerText = text;
   } catch (error) {
-    document.getElementById("msg").innerText = "❌ 發生錯誤：" + error.message;
+    document.getElementById("statusBox").innerText = "查詢失敗：" + error.message;
     console.error(error);
   }
+}
+
+async function useCoupon() {
+  try {
+    const ok = confirm("確定要使用這張優惠券嗎？使用後將不可恢復。");
+    if (!ok) return;
+
+    const profile = await getProfile();
+    if (!profile) return;
+
+    const result = await postToGas({
+      action: "use",
+      userId: profile.userId,
+      coupon: getCoupon()
+    });
+
+    document.getElementById("msg").innerText = result.message || (result.success ? "使用成功" : "使用失敗");
+    await checkStatus();
+  } catch (error) {
+    document.getElementById("msg").innerText = "❌ 使用失敗：" + error.message;
+    console.error(error);
+  }
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleString("zh-TW");
 }
 
 init();
