@@ -447,4 +447,55 @@ function renderSuccess(item) {
       <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
       <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
       <div><strong>狀態：</strong>${escapeHtml(item.status)}</div>
-      <d
+      <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+
+      <div style="margin-top:12px; color:#4b6f55; font-size:14px;">
+        5 秒後自動跳轉至我的優惠券...
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="btn-secondary" onclick="goToCouponList()">
+          前往我的優惠券
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("messageArea").innerHTML = html;
+
+  setTimeout(() => {
+    goToCouponList();
+  }, 5000);
+}
+
+function renderError(message) {
+  document.getElementById("messageArea").innerHTML = `
+    <div class="error">${escapeHtml(message)}</div>
+  `;
+}
+
+function goToCouponList() {
+  if (couponListUrl) {
+    window.location.href = couponListUrl;
+  }
+}
+
+function formatDate(value) {
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value || "";
+  return d.toLocaleString("zh-TW");
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+init();
+</script>
+</body>
+</html>
