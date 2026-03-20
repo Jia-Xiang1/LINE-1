@@ -178,10 +178,10 @@
       <div class="title">🎫 我的優惠券</div>
       <div class="subtitle">
         這裡會顯示你已領取的所有優惠券。<br>
-        可查看領取日、啟用日、使用日、到期日與使用狀態。
+        顧客出示本畫面後，由店員在此頁面下方直接按「店員確認使用」。
       </div>
       <div class="hint">
-        排序方式：依類別分組；同類別內，快到期且可使用的券會優先顯示。
+        排序方式：依類別分組；同類別內，快到期且可使用的券優先顯示。
       </div>
       <div class="actions">
         <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
@@ -193,7 +193,7 @@
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbxBsh3bbOKRjVv_M-nGkcergiYVSn215sdNr1j6rO_wyfrBy8NLQGZ0JxyOqlD3c8A/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbyv118KiCiMqgHMYMXuuQRQ7RSTP3CxTtRexau2nXb5mIqRDJJBiF9rjfKIvrOrHwOf/exec";
 
 async function init() {
   try {
@@ -321,7 +321,7 @@ async function loadCoupons() {
             </div>
 
             <div class="small">
-              顧客出示本畫面給店員後，再由店員確認使用。
+              顧客出示本畫面後，由店員按下此按鈕，系統即會回傳為已使用。
             </div>
           </div>
         `;
@@ -338,7 +338,7 @@ async function loadCoupons() {
 
 async function useCoupon(couponId) {
   try {
-    const ok = confirm("請確認店員已核對後再按下使用。是否確認使用此優惠券？");
+    const ok = confirm("請確認店員已核對並同意使用，是否回傳為已使用？");
     if (!ok) return;
 
     const result = await postToGas({
@@ -346,7 +346,7 @@ async function useCoupon(couponId) {
       couponId: couponId
     });
 
-    alert(result.message || (result.success ? "核銷成功" : "核銷失敗"));
+    alert(result.message || (result.success ? "已更新為已使用" : "更新失敗"));
     await loadCoupons();
   } catch (err) {
     alert("操作失敗：" + err.message);
