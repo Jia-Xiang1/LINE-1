@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -278,8 +279,15 @@ function renderSuccess(item) {
       <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
       <div><strong>狀態：</strong>${escapeHtml(item.status)}</div>
       <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+
+      <div style="margin-top:14px;">
+        <button class="btn-secondary" onclick="goToCouponList()">
+          前往我的優惠券
+        </button>
+      </div>
     </div>
   `;
+
   document.getElementById("messageArea").innerHTML = html;
 }
 
