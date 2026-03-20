@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>優惠券領取</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: #f7f7f7;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      background: #06c755;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>🎁 優惠券領取</h2>
+    <p id="coupon">載入中...</p>
+    <button onclick="claim()">立即領取</button>
+    <p id="msg"></p>
+  </div>
+
+<script>
+const liffId = "2009551865-NFJvmT4Q";
+const gasUrl = "https://script.google.com/macros/s/AKfycbyIoPGH7ImvwkKYu-UTGhMsVYRu5AF5qVB_P8JLKB4-KFN5zfNs-xHzhrG5yv1dFwqP/exec";
+
+function getCoupon() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("coupon") || "隨機優惠";
+}
+
+async function init() {
+  await liff.init({ liffId });
+
+  if (!liff.isLoggedIn()) {
+    liff.login();
+    return;
+  }
+
+  const coupon = getCoupon();
+  document.getElementById("coupon").innerText = "目前券種：" + coupon;
+}
+
+async function claim() {
+  const profile = await liff.getProfile();
+  const coupon = getCoupon();
+
+  const data = {
+    userId: profile.userId,
+    name: profile.displayName,
+    coupon: coupon,
+    source: "QR"
+  };
+
+  const res = await fetch(gasUrl, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+  document.getElementById("msg").innerText =
+    result.success ? "✅ 領取成功" : "❌ 失敗";
+}
+
+init();
+</script>
+</body>
+</html>
