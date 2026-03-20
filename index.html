@@ -41,7 +41,7 @@
 
 <script>
 const liffId = "2009551865-NFJvmT4Q";
-const gasUrl = "https://script.google.com/macros/s/AKfycbyIoPGH7ImvwkKYu-UTGhMsVYRu5AF5qVB_P8JLKB4-KFN5zfNs-xHzhrG5yv1dFwqP/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbxswrltp68-czjc1D8vM6Ci_14CCrLwVBs4cRE44Z1_BQnUxBFawq_JweiSixDUEQP5/exec";
 
 function getCoupon() {
   const url = new URL(window.location.href);
@@ -49,37 +49,65 @@ function getCoupon() {
 }
 
 async function init() {
-  await liff.init({ liffId });
+  try {
+    await liff.init({ liffId });
 
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return;
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+
+    const coupon = getCoupon();
+    document.getElementById("coupon").innerText = "目前券種：" + coupon;
+  } catch (error) {
+    document.getElementById("msg").innerText = "LIFF 初始化失敗：" + error.message;
+    console.error(error);
   }
-
-  const coupon = getCoupon();
-  document.getElementById("coupon").innerText = "目前券種：" + coupon;
 }
 
 async function claim() {
-  const profile = await liff.getProfile();
-  const coupon = getCoupon();
+  try {
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
 
-  const data = {
-    userId: profile.userId,
-    name: profile.displayName,
-    coupon: coupon,
-    source: "QR"
-  };
+    const profile = await liff.getProfile();
+    const coupon = getCoupon();
 
-  const res = await fetch(gasUrl, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(data)
-  });
+    const data = {
+      userId: profile.userId,
+      name: profile.displayName,
+      coupon: coupon,
+      source: "QR"
+    };
 
-  const result = await res.json();
-  document.getElementById("msg").innerText =
-    result.success ? "✅ 領取成功" : "❌ 失敗";
+    const formBody = new URLSearchParams(data).toString();
+
+    const res = await fetch(gasUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formBody
+    });
+
+    const text = await res.text();
+    console.log("GAS 回傳：", text);
+
+    let result = {};
+    try {
+      result = JSON.parse(text);
+    } catch (e) {
+      result = { success: false, message: text };
+    }
+
+    document.getElementById("msg").innerText =
+      result.success ? "✅ 領取成功" : "❌ 領取失敗";
+  } catch (error) {
+    document.getElementById("msg").innerText = "❌ 發生錯誤：" + error.message;
+    console.error(error);
+  }
 }
 
 init();
