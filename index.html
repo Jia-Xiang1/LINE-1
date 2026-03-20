@@ -3,72 +3,177 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>優惠券領取</title>
+  <title>我的優惠券</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 30px;
+      font-family: "Noto Sans TC", sans-serif;
       background: #f7f7f7;
+      margin: 0;
+      padding: 16px;
+      color: #2d1500;
     }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      max-width: 420px;
+
+    .wrap {
+      max-width: 760px;
       margin: 0 auto;
     }
+
+    .header {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #c9341a;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .section-title {
+      margin: 22px 0 12px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #8b1a0a;
+    }
+
+    .coupon-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+      border: 1px solid rgba(201, 52, 26, 0.08);
+    }
+
+    .coupon-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .coupon-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #c9341a;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-pending {
+      background: #fff2cc;
+      color: #8a6d1d;
+    }
+
+    .badge-available {
+      background: #e9f8ec;
+      color: #187a2f;
+    }
+
+    .badge-used {
+      background: #ececec;
+      color: #666;
+    }
+
+    .badge-expired {
+      background: #fdeaea;
+      color: #b42318;
+    }
+
+    .meta {
+      font-size: 14px;
+      line-height: 1.9;
+      color: #444;
+    }
+
+    .meta strong {
+      color: #8b1a0a;
+    }
+
+    .card-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     button {
-      margin-top: 12px;
-      padding: 12px 20px;
       border: none;
-      background: #06c755;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      width: 100%;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
     }
-    .secondary {
-      background: #666;
+
+    .btn-use {
+      background: #c9341a;
+      color: #fff;
     }
-    .danger {
-      background: #d9534f;
+
+    .btn-use:disabled {
+      background: #bbb;
+      cursor: not-allowed;
     }
-    #msg, #statusBox {
-      margin-top: 16px;
-      white-space: pre-line;
+
+    .btn-refresh {
+      background: #fff;
+      border: 1px solid #c9341a33;
+      color: #c9341a;
+    }
+
+    .empty,
+    .loading,
+    .error {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+      color: #666;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🎁 優惠券</h2>
-    <p id="coupon">載入中...</p>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">🎫 我的優惠券</div>
+      <div class="subtitle">可查看領取日、啟用日、到期日、使用狀態，並由店員確認核銷。</div>
+      <div class="hint">排序方式：依類別分組，同類別內快到期優先。</div>
+      <div class="card-actions">
+        <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
+      </div>
+    </div>
 
-    <button onclick="claimCoupon()">立即領取</button>
-    <button class="secondary" onclick="checkStatus()">查看是否已使用</button>
-    <button class="danger" onclick="useCoupon()">使用優惠券</button>
-
-    <p id="msg"></p>
-    <div id="statusBox"></div>
+    <div id="couponList" class="loading">載入中...</div>
   </div>
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbwtmW4F-8L0_w8pzOBW64vzXCp_PSK5HPWeddLFDYGnQcK4GXXqy5_Huvwu8cxijPE/exec";
-
-function getCoupon() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get("coupon") || "隨機優惠";
-}
-
-function getSource() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get("from") || "QR";
-}
+const gasUrl = "https://script.google.com/macros/s/AKfycbwd0ViOrwyOy6T_8sz6vuxDLWeekP-KMzkrNqAvnr3pn_YbPU9iI2vr5IWwMRsgmobQ/exec";
 
 async function init() {
   try {
@@ -79,20 +184,12 @@ async function init() {
       return;
     }
 
-    document.getElementById("coupon").innerText = "目前券種：" + getCoupon();
-    await checkStatus();
-  } catch (error) {
-    document.getElementById("msg").innerText = "LIFF 初始化失敗：" + error.message;
-    console.error(error);
+    await loadCoupons();
+  } catch (err) {
+    document.getElementById("couponList").innerHTML =
+      '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
+    console.error(err);
   }
-}
-
-async function getProfile() {
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return null;
-  }
-  return await liff.getProfile();
 }
 
 async function postToGas(payload) {
@@ -115,85 +212,162 @@ async function postToGas(payload) {
   }
 }
 
-async function claimCoupon() {
+async function loadCoupons() {
   try {
-    const profile = await getProfile();
-    if (!profile) return;
+    document.getElementById("couponList").innerHTML =
+      '<div class="loading">載入中...</div>';
+
+    const profile = await liff.getProfile();
 
     const result = await postToGas({
-      action: "claim",
-      userId: profile.userId,
-      name: profile.displayName,
-      coupon: getCoupon(),
-      source: getSource()
+      action: "list",
+      userId: profile.userId
     });
 
-    document.getElementById("msg").innerText = result.message || (result.success ? "領取成功" : "領取失敗");
-    await checkStatus();
-  } catch (error) {
-    document.getElementById("msg").innerText = "❌ 領取失敗：" + error.message;
-    console.error(error);
-  }
-}
-
-async function checkStatus() {
-  try {
-    const profile = await getProfile();
-    if (!profile) return;
-
-    const result = await postToGas({
-      action: "status",
-      userId: profile.userId,
-      coupon: getCoupon()
-    });
-
-    if (!result.found) {
-      document.getElementById("statusBox").innerText = "尚未領取此優惠券";
+    if (!result.success || !result.items || result.items.length === 0) {
+      document.getElementById("couponList").innerHTML =
+        '<div class="empty">目前沒有優惠券</div>';
       return;
     }
 
-    let text = "優惠券：" + result.coupon + "\n";
-    text += "狀態：" + result.status + "\n";
-    text += "領取時間：" + formatDate(result.claimedAt) + "\n";
+    const items = result.items.map(item => {
+      const claimedAtDate = toDate(item.claimedAt);
+      const activateAtDate = toDate(item.activateAt);
+      const usedAtDate = item.usedAt ? toDate(item.usedAt) : null;
+      const expireAtDate = toDate(item.expireAt);
+      const displayStatus = getDisplayStatus(item.status, activateAtDate, expireAtDate);
 
-    if (result.usedAt) {
-      text += "使用時間：" + formatDate(result.usedAt);
-    }
+      return {
+        ...item,
+        claimedAtDate,
+        activateAtDate,
+        usedAtDate,
+        expireAtDate,
+        displayStatus
+      };
+    });
 
-    document.getElementById("statusBox").innerText = text;
-  } catch (error) {
-    document.getElementById("statusBox").innerText = "查詢失敗：" + error.message;
-    console.error(error);
+    items.sort((a, b) => {
+      if (a.category !== b.category) {
+        return a.category.localeCompare(b.category, 'zh-Hant');
+      }
+
+      if (a.displayStatus.order !== b.displayStatus.order) {
+        return a.displayStatus.order - b.displayStatus.order;
+      }
+
+      return a.expireAtDate - b.expireAtDate;
+    });
+
+    const groups = {};
+    items.forEach(item => {
+      if (!groups[item.category]) groups[item.category] = [];
+      groups[item.category].push(item);
+    });
+
+    let html = '';
+
+    Object.keys(groups).forEach(category => {
+      html += `<div class="section-title">${escapeHtml(category)}</div>`;
+
+      groups[category].forEach(item => {
+        const canUse = item.displayStatus.text === '可使用';
+
+        html += `
+          <div class="coupon-card">
+            <div class="coupon-top">
+              <div class="coupon-name">${escapeHtml(item.coupon)}</div>
+              <span class="badge ${item.displayStatus.className}">
+                ${item.displayStatus.text}
+              </span>
+            </div>
+
+            <div class="meta">
+              <div><strong>領取日：</strong>${formatDate(item.claimedAtDate)}</div>
+              <div><strong>啟用日：</strong>${formatDate(item.activateAtDate)}</div>
+              <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : '尚未使用'}</div>
+              <div><strong>到期日：</strong>${formatDate(item.expireAtDate)}</div>
+              <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+            </div>
+
+            <div class="card-actions">
+              <button
+                class="btn-use"
+                onclick="useCoupon('${escapeJs(item.couponId)}')"
+                ${canUse ? '' : 'disabled'}
+              >
+                店員確認使用
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    });
+
+    document.getElementById("couponList").innerHTML = html;
+  } catch (err) {
+    document.getElementById("couponList").innerHTML =
+      '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
+    console.error(err);
   }
 }
 
-async function useCoupon() {
+async function useCoupon(couponId) {
   try {
-    const ok = confirm("確定要使用這張優惠券嗎？使用後將不可恢復。");
+    const ok = confirm("請確認已由店員核對後再按下使用。是否確認使用此優惠券？");
     if (!ok) return;
-
-    const profile = await getProfile();
-    if (!profile) return;
 
     const result = await postToGas({
       action: "use",
-      userId: profile.userId,
-      coupon: getCoupon()
+      couponId: couponId
     });
 
-    document.getElementById("msg").innerText = result.message || (result.success ? "使用成功" : "使用失敗");
-    await checkStatus();
-  } catch (error) {
-    document.getElementById("msg").innerText = "❌ 使用失敗：" + error.message;
-    console.error(error);
+    alert(result.message || (result.success ? "核銷成功" : "核銷失敗"));
+    await loadCoupons();
+  } catch (err) {
+    alert("操作失敗：" + err.message);
+    console.error(err);
   }
 }
 
-function formatDate(value) {
-  if (!value) return "";
-  const d = new Date(value);
-  if (isNaN(d.getTime())) return value;
-  return d.toLocaleString("zh-TW");
+function getDisplayStatus(status, activateAtDate, expireAtDate) {
+  const now = new Date();
+
+  if (status === '已使用') {
+    return { text: '已使用', className: 'badge-used', order: 4 };
+  }
+
+  if (now < activateAtDate) {
+    return { text: '未啟用', className: 'badge-pending', order: 2 };
+  }
+
+  if (now > expireAtDate) {
+    return { text: '已過期', className: 'badge-expired', order: 3 };
+  }
+
+  return { text: '可使用', className: 'badge-available', order: 1 };
+}
+
+function toDate(value) {
+  return new Date(value);
+}
+
+function formatDate(d) {
+  if (!(d instanceof Date) || isNaN(d.getTime())) return '';
+  return d.toLocaleString('zh-TW');
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeJs(str) {
+  return String(str || '').replaceAll("'", "\\'");
 }
 
 init();
