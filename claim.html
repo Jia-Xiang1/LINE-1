@@ -294,6 +294,7 @@
         <div id="couponName" class="coupon-name">載入中...</div>
 
         <div class="meta">
+          <div><strong>活動類別：</strong><span id="eventTypeText">載入中...</span></div>
           <div><strong>來源：</strong><span id="sourceText">載入中...</span></div>
           <div><strong>狀態：</strong>領取後建立優惠券</div>
         </div>
@@ -330,7 +331,7 @@
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbyv118KiCiMqgHMYMXuuQRQ7RSTP3CxTtRexau2nXb5mIqRDJJBiF9rjfKIvrOrHwOf/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbxMWHeS1ksJGYfp-VaU2Qr_LP2oxpAvOUFK_diA-HtuODnkQQpAjqUpsrBp9-dlQBgI/exec";
 const couponListUrl = "https://liff.line.me/2009551865-e6Y0VCE6";
 let redirectTimer = null;
 
@@ -339,8 +340,12 @@ function getParam(name) {
   return url.searchParams.get(name) || "";
 }
 
-function getCoupon() {
-  return getParam("coupon") || "未指定券種";
+function getEventType() {
+  return getParam("eventType") || "未指定活動";
+}
+
+function getCouponName() {
+  return getParam("couponName") || "未指定券名";
 }
 
 function getCategory() {
@@ -360,8 +365,9 @@ async function init() {
       return;
     }
 
-    document.getElementById("couponName").innerText = getCoupon();
+    document.getElementById("couponName").innerText = getCouponName();
     document.getElementById("category").innerText = getCategory();
+    document.getElementById("eventTypeText").innerText = getEventType();
     document.getElementById("sourceText").innerText = getSource();
   } catch (err) {
     renderError("LIFF 初始化失敗：" + err.message);
@@ -414,7 +420,8 @@ async function claimCoupon() {
       action: "claim",
       userId: profile.userId,
       name: profile.displayName,
-      coupon: getCoupon(),
+      eventType: getEventType(),
+      couponName: getCouponName(),
       category: getCategory(),
       source: getSource()
     });
@@ -442,7 +449,8 @@ function renderSuccess(item) {
   const html = `
     <div class="result">
       <div><strong>領券成功 🎉</strong></div>
-      <div><strong>券別：</strong>${escapeHtml(item.coupon)}</div>
+      <div><strong>活動類別：</strong>${escapeHtml(item.eventType)}</div>
+      <div><strong>名稱：</strong>${escapeHtml(item.couponName)}</div>
       <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
       <div><strong>領取日：</strong>${formatDate(item.claimedAt)}</div>
       <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
@@ -508,4 +516,5 @@ function escapeHtml(str) {
 init();
 </script>
 </body>
-</html>
+</html>rgctxassistant to=web.run analysis  สำนักเลขานุการองค์กร  天天购彩票 code ￣色្មី  天天赢彩票=json
+{"open":[{"ref_id":"https://developers.line.biz/en/reference/liff/#common-issues-permissions"}],"response_length":"short"}
