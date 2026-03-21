@@ -319,7 +319,7 @@
 
 <script>
 const liffId = "2009551865-e6Y0VCE6";
-const gasUrl = "https://script.google.com/macros/s/AKfycbxMWHeS1ksJGYfp-VaU2Qr_LP2oxpAvOUFK_diA-HtuODnkQQpAjqUpsrBp9-dlQBgI/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbybehPsBRaGnFNP_SQkNwE6ePvPwZ537-ZWAsjXQCW1lqBzlXfk0Q4OjW2IwNCsY6kV/exec";
 
 async function init() {
   try {
@@ -443,14 +443,14 @@ async function loadCoupons() {
                 <div><strong>啟用日：</strong>${formatDate(item.activateAtDate)}</div>
                 <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : "尚未使用"}</div>
                 <div><strong>到期日：</strong>${formatDate(item.expireAtDate)}</div>
-                <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+                <div><strong>券號：</strong>${escapeHtml(item.couponNameCode)}</div>
               </div>
             </div>
 
             <div class="card-actions">
               <button
                 class="btn-use"
-                onclick="useCoupon('${escapeJs(item.couponId)}')"
+                onclick="useCoupon('${escapeJs(item.couponNameCode)}')"
                 ${canUse ? "" : "disabled"}
               >
                 店員確認使用
