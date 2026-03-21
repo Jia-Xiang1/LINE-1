@@ -298,11 +298,11 @@
       <div class="brand-small">我的優惠券</div>
       <div class="title">查看你的已領優惠券</div>
       <div class="subtitle">
-        可查看領取日、啟用日、使用日、到期日與使用狀態。<br />
+        可查看活動類別、名稱、分類、領取日、啟用日、使用日、到期日與使用狀態。<br />
         顧客出示本畫面後，由店員於此頁面下方按下「店員確認使用」。
       </div>
       <div class="hint">
-        排序方式：依類別分組；同類別內，快到期且可使用的券會優先顯示。
+        排序方式：先依活動類別，再依分類分組；同組內快到期且可使用的券會優先顯示。
       </div>
 
       <div class="actions">
@@ -319,7 +319,7 @@
 
 <script>
 const liffId = "2009551865-e6Y0VCE6";
-const gasUrl = "https://script.google.com/macros/s/AKfycbyv118KiCiMqgHMYMXuuQRQ7RSTP3CxTtRexau2nXb5mIqRDJJBiF9rjfKIvrOrHwOf/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbxMWHeS1ksJGYfp-VaU2Qr_LP2oxpAvOUFK_diA-HtuODnkQQpAjqUpsrBp9-dlQBgI/exec";
 
 async function init() {
   try {
@@ -394,8 +394,12 @@ async function loadCoupons() {
     });
 
     items.sort((a, b) => {
+      if (a.eventType !== b.eventType) {
+        return a.eventType.localeCompare(b.eventType, "zh-Hant");
+      }
+
       if (a.category !== b.category) {
-        return a.category.localeCompare(b.category, 'zh-Hant');
+        return a.category.localeCompare(b.category, "zh-Hant");
       }
 
       if (a.displayStatus.order !== b.displayStatus.order) {
@@ -407,22 +411,24 @@ async function loadCoupons() {
 
     const groups = {};
     items.forEach(item => {
-      if (!groups[item.category]) groups[item.category] = [];
-      groups[item.category].push(item);
+      const groupKey = `${item.eventType}｜${item.category}`;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(item);
     });
 
     let html = '';
 
-    Object.keys(groups).forEach(category => {
-      html += `<div class="section-title">${escapeHtml(category)}</div>`;
+    Object.keys(groups).forEach(groupKey => {
+      const [eventType, category] = groupKey.split('｜');
+      html += `<div class="section-title">${escapeHtml(eventType)}｜${escapeHtml(category)}</div>`;
 
-      groups[category].forEach(item => {
-        const canUse = item.displayStatus.text === '可使用';
+      groups[groupKey].forEach(item => {
+        const canUse = item.displayStatus.text === "可使用";
 
         html += `
           <div class="coupon-card">
             <div class="coupon-top">
-              <div class="coupon-name">${escapeHtml(item.coupon)}</div>
+              <div class="coupon-name">${escapeHtml(item.couponName)}</div>
               <span class="badge ${item.displayStatus.className}">
                 ${item.displayStatus.text}
               </span>
@@ -430,9 +436,12 @@ async function loadCoupons() {
 
             <div class="meta-box">
               <div class="meta">
+                <div><strong>活動類別：</strong>${escapeHtml(item.eventType)}</div>
+                <div><strong>名稱：</strong>${escapeHtml(item.couponName)}</div>
+                <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
                 <div><strong>領取日：</strong>${formatDate(item.claimedAtDate)}</div>
                 <div><strong>啟用日：</strong>${formatDate(item.activateAtDate)}</div>
-                <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : '尚未使用'}</div>
+                <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : "尚未使用"}</div>
                 <div><strong>到期日：</strong>${formatDate(item.expireAtDate)}</div>
                 <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
               </div>
@@ -442,7 +451,7 @@ async function loadCoupons() {
               <button
                 class="btn-use"
                 onclick="useCoupon('${escapeJs(item.couponId)}')"
-                ${canUse ? '' : 'disabled'}
+                ${canUse ? "" : "disabled"}
               >
                 店員確認使用
               </button>
@@ -485,19 +494,19 @@ async function useCoupon(couponId) {
 function getDisplayStatus(status, activateAtDate, expireAtDate) {
   const now = new Date();
 
-  if (status === '已使用') {
-    return { text: '已使用', className: 'badge-used', order: 4 };
+  if (status === "已使用") {
+    return { text: "已使用", className: "badge-used", order: 4 };
   }
 
   if (now < activateAtDate) {
-    return { text: '未啟用', className: 'badge-pending', order: 2 };
+    return { text: "未啟用", className: "badge-pending", order: 2 };
   }
 
   if (now > expireAtDate) {
-    return { text: '已過期', className: 'badge-expired', order: 3 };
+    return { text: "已過期", className: "badge-expired", order: 3 };
   }
 
-  return { text: '可使用', className: 'badge-available', order: 1 };
+  return { text: "可使用", className: "badge-available", order: 1 };
 }
 
 function toDate(value) {
@@ -505,21 +514,21 @@ function toDate(value) {
 }
 
 function formatDate(d) {
-  if (!(d instanceof Date) || isNaN(d.getTime())) return '';
-  return d.toLocaleString('zh-TW');
+  if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+  return d.toLocaleString("zh-TW");
 }
 
 function escapeHtml(str) {
-  return String(str || '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function escapeJs(str) {
-  return String(str || '').replaceAll("'", "\\'");
+  return String(str || "").replaceAll("'", "\\'");
 }
 
 init();
