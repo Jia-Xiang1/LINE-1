@@ -331,7 +331,7 @@
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbxMWHeS1ksJGYfp-VaU2Qr_LP2oxpAvOUFK_diA-HtuODnkQQpAjqUpsrBp9-dlQBgI/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbybehPsBRaGnFNP_SQkNwE6ePvPwZ537-ZWAsjXQCW1lqBzlXfk0Q4OjW2IwNCsY6kV/exec";
 const couponListUrl = "https://liff.line.me/2009551865-e6Y0VCE6";
 let redirectTimer = null;
 
@@ -456,7 +456,7 @@ function renderSuccess(item) {
       <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
       <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
       <div><strong>狀態：</strong>${escapeHtml(item.status)}</div>
-      <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+      <div><strong>券號：</strong>${escapeHtml(item.couponNameCode)}</div>
 
       <div style="margin-top:12px; color:#4b6f55; font-size:14px;">
         5 秒後自動跳轉至我的優惠券...
