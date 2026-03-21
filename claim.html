@@ -347,6 +347,10 @@ function getEventType() {
 function getCouponName() {
   return getParam("couponName") || "未指定券名";
 }
+  
+function getCouponNameCode() {
+  return getParam("couponNameCode") || "X00";
+}
 
 function getCategory() {
   return getParam("category") || "其他";
@@ -423,7 +427,8 @@ async function claimCoupon() {
       eventType: getEventType(),
       couponName: getCouponName(),
       category: getCategory(),
-      source: getSource()
+      source: getSource(),
+      couponNameCode:getcouponNameCode()
     });
 
     if (!result.success) {
