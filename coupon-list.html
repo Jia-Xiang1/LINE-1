@@ -443,7 +443,8 @@ async function loadCoupons() {
                 <div><strong>啟用日：</strong>${formatDate(item.activateAtDate)}</div>
                 <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : "尚未使用"}</div>
                 <div><strong>到期日：</strong>${formatDate(item.expireAtDate)}</div>
-                <div><strong>券號：</strong>${escapeHtml(item.couponNameCode)}</div>
+                <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode)}</div>
+                <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
               </div>
             </div>
 
