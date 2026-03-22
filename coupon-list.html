@@ -7,7 +7,6 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: "Noto Sans TC", sans-serif;
@@ -16,258 +15,94 @@
       min-height: 100vh;
       padding: 20px 14px 28px;
     }
-
-    .wrap {
-      max-width: 780px;
-      margin: 0 auto;
-    }
-
+    .wrap { max-width: 780px; margin: 0 auto; }
     .top-deco {
-      height: 10px;
-      border-radius: 999px;
+      height: 10px; border-radius: 999px;
       background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
+      margin-bottom: 16px; box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
     }
-
     .header-card {
       background: rgba(255, 255, 255, 0.92);
-      border-radius: 24px;
-      padding: 22px 18px 18px;
+      border-radius: 24px; padding: 22px 18px 18px;
       box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(201, 52, 26, 0.08);
-      backdrop-filter: blur(4px);
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 18px;
+      backdrop-filter: blur(4px); position: relative; overflow: hidden; margin-bottom: 18px;
     }
-
     .header-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
       background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
     }
-
     .brand-small {
-      display: inline-block;
-      font-size: 12px;
-      letter-spacing: 0.28em;
-      color: rgba(201, 52, 26, 0.75);
-      margin-bottom: 8px;
-      font-weight: 700;
+      display: inline-block; font-size: 12px; letter-spacing: 0.28em;
+      color: rgba(201, 52, 26, 0.75); margin-bottom: 8px; font-weight: 700;
     }
-
-    .title {
-      font-size: 28px;
-      font-weight: 900;
-      color: #c9341a;
-      margin-bottom: 8px;
-      line-height: 1.2;
+    .title { font-size: 28px; font-weight: 900; color: #c9341a; margin-bottom: 8px; line-height: 1.2; }
+    .subtitle { color: #6f6259; font-size: 14px; line-height: 1.8; }
+    .hint { margin-top: 10px; color: #8b8078; font-size: 12px; line-height: 1.7; }
+    .quota-box {
+      margin-top: 12px; background: #fff8f0; border: 1px solid rgba(201, 52, 26, 0.12);
+      border-radius: 14px; padding: 12px 14px; color: #8b1a0a; font-size: 13px; line-height: 1.8;
     }
-
-    .subtitle {
-      color: #6f6259;
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .hint {
-      margin-top: 10px;
-      color: #8b8078;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .actions {
-      margin-top: 14px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
     button {
-      border: none;
-      border-radius: 14px;
-      padding: 11px 15px;
-      font-size: 14px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+      border: none; border-radius: 14px; padding: 11px 15px;
+      font-size: 14px; font-weight: 900; cursor: pointer;
     }
-
-    button:active { transform: scale(0.99); }
-
-    .btn-refresh {
-      background: #fff;
-      color: #c9341a;
-      border: 1px solid rgba(201, 52, 26, 0.18);
-    }
-
-    .btn-refresh:hover {
-      opacity: 0.95;
-    }
-
-    .section-title {
-      margin: 22px 0 12px;
-      font-size: 18px;
-      font-weight: 900;
-      color: #8b1a0a;
-      padding-left: 4px;
-    }
-
+    .btn-refresh { background: #fff; color: #c9341a; border: 1px solid rgba(201, 52, 26, 0.18); }
+    .section-title { margin: 22px 0 12px; font-size: 18px; font-weight: 900; color: #8b1a0a; padding-left: 4px; }
     .coupon-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 22px;
-      padding: 16px;
-      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.95); border-radius: 22px; padding: 16px; margin-bottom: 12px;
       box-shadow: 0 8px 24px rgba(86, 45, 10, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
-      border: 1px solid rgba(201, 52, 26, 0.08);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid rgba(201, 52, 26, 0.08); position: relative; overflow: hidden;
     }
-
     .coupon-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 6px;
-      bottom: 0;
-      background: linear-gradient(180deg, #c9341a 0%, #d7a423 100%);
-      opacity: 0.9;
+      content: ""; position: absolute; top: 0; left: 0; width: 6px; bottom: 0;
+      background: linear-gradient(180deg, #c9341a 0%, #d7a423 100%); opacity: 0.9;
     }
-
     .coupon-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-      padding-left: 8px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; margin-bottom: 10px; padding-left: 8px;
     }
-
-    .coupon-name {
-      font-size: 20px;
-      font-weight: 900;
-      color: #c9341a;
-      line-height: 1.4;
-    }
-
+    .coupon-name { font-size: 20px; font-weight: 900; color: #c9341a; line-height: 1.4; }
     .badge {
-      display: inline-block;
-      padding: 7px 11px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+      display: inline-block; padding: 7px 11px; border-radius: 999px;
+      font-size: 12px; font-weight: 900; white-space: nowrap;
     }
-
-    .badge-pending {
-      background: #fff2cc;
-      color: #8a6d1d;
-    }
-
-    .badge-available {
-      background: #e9f8ec;
-      color: #187a2f;
-    }
-
-    .badge-used {
-      background: #ececec;
-      color: #666;
-    }
-
-    .badge-expired {
-      background: #fdeaea;
-      color: #b42318;
-    }
-
+    .badge-pending { background: #fff2cc; color: #8a6d1d; }
+    .badge-available { background: #e9f8ec; color: #187a2f; }
+    .badge-used { background: #ececec; color: #666; }
+    .badge-expired { background: #fdeaea; color: #b42318; }
     .meta-box {
-      margin-left: 8px;
-      background: #fffaf4;
-      border: 1px dashed rgba(201, 52, 26, 0.18);
-      border-radius: 16px;
-      padding: 12px 14px;
+      margin-left: 8px; background: #fffaf4; border: 1px dashed rgba(201, 52, 26, 0.18);
+      border-radius: 16px; padding: 12px 14px;
     }
-
-    .meta {
-      font-size: 14px;
-      line-height: 1.95;
-      color: #4c433d;
-    }
-
-    .meta strong {
-      color: #8b1a0a;
-      font-weight: 800;
-    }
-
-    .card-actions {
-      margin-top: 14px;
-      margin-left: 8px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .meta { font-size: 14px; line-height: 1.95; color: #4c433d; }
+    .meta strong { color: #8b1a0a; font-weight: 800; }
+    .card-actions { margin-top: 14px; margin-left: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
     .btn-use {
       background: linear-gradient(135deg, #c9341a 0%, #8b1a0a 100%);
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(201, 52, 26, 0.16);
+      color: #fff; box-shadow: 0 8px 18px rgba(201, 52, 26, 0.16);
     }
-
-    .btn-use:hover {
-      opacity: 0.96;
+    .btn-share {
+      background: #06c755;
+      color: #fff; box-shadow: 0 8px 18px rgba(6, 199, 85, 0.16);
     }
-
-    .btn-use:disabled {
-      background: #c9c9c9;
-      color: #fff;
-      cursor: not-allowed;
-      box-shadow: none;
+    .btn-use:disabled, .btn-share:disabled {
+      background: #c9c9c9; color: #fff; cursor: not-allowed; box-shadow: none;
     }
-
-    .small {
-      font-size: 12px;
-      color: #8f847d;
-      margin-top: 8px;
-      margin-left: 8px;
-      line-height: 1.7;
-    }
-
-    .empty,
-    .loading,
-    .error {
-      background: rgba(255,255,255,0.94);
-      border-radius: 20px;
-      padding: 18px;
+    .small { font-size: 12px; color: #8f847d; margin-top: 8px; margin-left: 8px; line-height: 1.7; }
+    .empty, .loading, .error {
+      background: rgba(255,255,255,0.94); border-radius: 20px; padding: 18px;
       box-shadow: 0 8px 24px rgba(86, 45, 10, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
       border: 1px solid rgba(201, 52, 26, 0.08);
     }
-
-    .error {
-      color: #b42318;
-      background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%);
-      border: 1px solid #f0c9c4;
-    }
-
-    .footer-note {
-      text-align: center;
-      margin-top: 18px;
-      font-size: 11px;
-      color: #9b8f87;
-      letter-spacing: 0.08em;
-    }
-
+    .error { color: #b42318; background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%); border: 1px solid #f0c9c4; }
+    .footer-note { text-align: center; margin-top: 18px; font-size: 11px; color: #9b8f87; letter-spacing: 0.08em; }
     @media (max-width: 520px) {
       .title { font-size: 24px; }
       .coupon-name { font-size: 18px; }
-      .coupon-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .coupon-top { flex-direction: column; align-items: flex-start; }
+      .card-actions { flex-direction: column; }
     }
   </style>
 </head>
@@ -286,11 +121,11 @@
         排序方式：先依活動類別，再依分類分組；同組內快到期且可使用的券會優先顯示。
       </div>
 
-      <div class="actions">
-  <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
-</div>
+      <div id="quotaInfo" class="quota-box" style="display:none;">載入可轉贈張數中...</div>
 
-<div id="quotaInfo" class="hint"></div>
+      <div class="actions">
+        <button class="btn-refresh" onclick="reloadAll()">重新整理</button>
+      </div>
     </div>
 
     <div id="couponList" class="loading">載入中...</div>
@@ -302,72 +137,96 @@
 
 <script>
 const liffId = "2009551865-e6Y0VCE6";
-const gasUrl = "https://script.google.com/macros/s/AKfycbxV6YwEkVSdnIRzH7SvRmewtgHk5K6-gDOtesQW2D8khiyrmNH0iQqRZs-_UaMNiGrc/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbw05a-6n5Zh_9EuFVvJWBrchpqdO_x-_wJVJx3YBAxHl8u_MUA0SxT8LRdftpW7_Nhq/exec";
+const transferClaimBaseUrl = "https://liff.line.me/2009551865-EGhyWa2w";
+const quotaCouponCode = "EMP200";
+
+let transferQuotaInfo = {
+  found: false,
+  enabled: "否",
+  remainQuota: 0,
+  usedQuota: 0,
+  pendingCount: 0,
+  totalQuota: 0
+};
 
 async function init() {
   try {
     await liff.init({ liffId });
-
     if (!liff.isLoggedIn()) {
       liff.login();
       return;
     }
-
-    await loadCoupons();
+    await reloadAll();
   } catch (err) {
     document.getElementById("couponList").innerHTML =
       '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
-    console.error(err);
   }
+}
+
+async function reloadAll() {
+  await loadQuota();
+  await loadCoupons();
 }
 
 async function postToGas(payload) {
-  const formBody = new URLSearchParams(payload).toString();
-
   const res = await fetch(gasUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: formBody
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(payload).toString()
   });
-
   const text = await res.text();
-
   try {
     return JSON.parse(text);
-  } catch (e) {
+  } catch {
     throw new Error("伺服器回應格式錯誤：" + text);
   }
 }
- async function loadQuota() {
+
+async function loadQuota() {
   try {
     const profile = await liff.getProfile();
-
     const result = await postToGas({
       action: "getQuota",
       userId: profile.userId,
-      couponNameCode: "EMP200"
+      couponNameCode: quotaCouponCode
     });
 
-    if (!result.success || !result.found) {
-      document.getElementById("quotaInfo").innerText =
-        "目前沒有可轉贈配額";
+    const quotaBox = document.getElementById("quotaInfo");
+
+    if (!result.success || !result.found || result.enabled !== "是") {
+      transferQuotaInfo = {
+        found: false,
+        enabled: "否",
+        remainQuota: 0,
+        usedQuota: 0,
+        pendingCount: 0,
+        totalQuota: 0
+      };
+      quotaBox.style.display = "none";
       return;
     }
 
-    document.getElementById("quotaInfo").innerText =
-      "可轉贈剩餘：" + result.remainQuota + " 張";
+    transferQuotaInfo = {
+      found: true,
+      enabled: result.enabled,
+      remainQuota: Number(result.remainQuota || 0),
+      usedQuota: Number(result.usedQuota || 0),
+      pendingCount: Number(result.pendingCount || 0),
+      totalQuota: Number(result.totalQuota || 0)
+    };
+
+    quotaBox.style.display = "block";
+    quotaBox.innerText =
+      `${quotaCouponCode} 可轉贈剩餘：${transferQuotaInfo.remainQuota} 張（已成功 ${transferQuotaInfo.usedQuota} / 待領取 ${transferQuotaInfo.pendingCount} / 總額度 ${transferQuotaInfo.totalQuota}）`;
   } catch (err) {
-    console.error(err);
+    document.getElementById("quotaInfo").style.display = "none";
   }
 }
 
 async function loadCoupons() {
   try {
-    document.getElementById("couponList").innerHTML =
-      '<div class="loading">載入中...</div>';
-
+    document.getElementById("couponList").innerHTML = '<div class="loading">載入中...</div>';
     const profile = await liff.getProfile();
 
     const result = await postToGas({
@@ -376,8 +235,7 @@ async function loadCoupons() {
     });
 
     if (!result.success || !result.items || result.items.length === 0) {
-      document.getElementById("couponList").innerHTML =
-        '<div class="empty">目前沒有優惠券</div>';
+      document.getElementById("couponList").innerHTML = '<div class="empty">目前沒有優惠券</div>';
       return;
     }
 
@@ -386,10 +244,7 @@ async function loadCoupons() {
       const activateAtDate = toDate(item.activateAt);
       const usedAtDate = item.usedAt ? toDate(item.usedAt) : null;
       const expireAtDate = toDate(item.expireAt);
-
-      // 若 GAS 沒回 status，也用日期推算
-      const status = item.status || "";
-      const displayStatus = getDisplayStatus(status, activateAtDate, expireAtDate);
+      const displayStatus = getDisplayStatus(item.status || "", activateAtDate, expireAtDate);
 
       return {
         ...item,
@@ -405,11 +260,9 @@ async function loadCoupons() {
       if ((a.eventType || "") !== (b.eventType || "")) {
         return (a.eventType || "").localeCompare((b.eventType || ""), "zh-Hant");
       }
-
       if ((a.category || "") !== (b.category || "")) {
         return (a.category || "").localeCompare((b.category || ""), "zh-Hant");
       }
-
       if (a.displayStatus.order !== b.displayStatus.order) {
         return a.displayStatus.order - b.displayStatus.order;
       }
@@ -434,6 +287,13 @@ async function loadCoupons() {
 
       groups[groupKey].forEach(item => {
         const canUse = item.displayStatus.text === "可使用";
+        const canTransfer =
+          canUse &&
+          item.status !== "已使用" &&
+          item.couponNameCode === quotaCouponCode &&
+          transferQuotaInfo.found &&
+          transferQuotaInfo.enabled === "是" &&
+          transferQuotaInfo.remainQuota > 0;
 
         html += `
           <div class="coupon-card">
@@ -467,17 +327,26 @@ async function loadCoupons() {
                 店員確認使用
               </button>
 
+              ${canTransfer ? `
               <button
                 class="btn-use"
                 onclick="createTransfer('${escapeJs(item.couponId)}')"
-                ${canUse ? "" : "disabled"}
               >
                 轉贈朋友
-             </button>
+              </button>
+
+              <button
+                class="btn-share"
+                onclick="shareTransfer('${escapeJs(item.couponId)}')"
+              >
+                LINE分享
+              </button>
+              ` : ''}
             </div>
 
             <div class="small">
-              顧客出示本畫面後，由店員按下此按鈕，系統即會回傳為已使用。
+              顧客出示本畫面後，由店員按下「店員確認使用」即可回傳為已使用。
+              ${canTransfer ? '<br />此券可轉贈給朋友。' : ''}
             </div>
           </div>
         `;
@@ -488,7 +357,6 @@ async function loadCoupons() {
   } catch (err) {
     document.getElementById("couponList").innerHTML =
       '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
-    console.error(err);
   }
 }
 
@@ -499,58 +367,102 @@ async function useCoupon(couponId) {
 
     const result = await postToGas({
       action: "use",
-      couponId: couponId
+      couponId
     });
 
     alert(result.message || (result.success ? "已更新為已使用" : "更新失敗"));
-    await loadQuota();
-    await loadCoupons();
+    await reloadAll();
   } catch (err) {
     alert("操作失敗：" + err.message);
-    console.error(err);
+  }
+}
+
+async function createTransfer(couponId) {
+  try {
+    const profile = await liff.getProfile();
+    const result = await postToGas({
+      action: "createTransfer",
+      couponId,
+      userId: profile.userId,
+      name: profile.displayName
+    });
+
+    if (!result.success) {
+      alert(result.message || "建立轉贈連結失敗");
+      return;
+    }
+
+    const transferUrl = transferClaimBaseUrl + "?transferToken=" + encodeURIComponent(result.transferToken);
+    await navigator.clipboard.writeText(transferUrl);
+    alert("一次性轉贈連結已複製，可貼給朋友");
+    await reloadAll();
+  } catch (err) {
+    alert("操作失敗：" + err.message);
+  }
+}
+
+async function shareTransfer(couponId) {
+  try {
+    const profile = await liff.getProfile();
+    const result = await postToGas({
+      action: "createTransfer",
+      couponId,
+      userId: profile.userId,
+      name: profile.displayName
+    });
+
+    if (!result.success) {
+      alert(result.message || "建立轉贈連結失敗");
+      return;
+    }
+
+    const transferUrl = transferClaimBaseUrl + "?transferToken=" + encodeURIComponent(result.transferToken);
+
+    if (!liff.isApiAvailable("shareTargetPicker")) {
+      await navigator.clipboard.writeText(transferUrl);
+      alert("此裝置不支援 LINE 分享，已改為複製連結");
+      await reloadAll();
+      return;
+    }
+
+    const shareResult = await liff.shareTargetPicker([
+      { type: "text", text: "送你一張優惠券，點下方連結即可領取：\n" + transferUrl }
+    ]);
+
+    if (shareResult) {
+      alert("已開啟 LINE 分享");
+    } else {
+      await navigator.clipboard.writeText(transferUrl);
+      alert("你未完成分享，已改為複製連結");
+    }
+
+    await reloadAll();
+  } catch (err) {
+    alert("LINE 分享失敗：" + err.message);
   }
 }
 
 function getDisplayStatus(status, activateAtDate, expireAtDate) {
   const now = new Date();
 
-  if (status === "已使用") {
-    return { text: "已使用", className: "badge-used", order: 4 };
-  }
-
-  if (!(activateAtDate instanceof Date) || isNaN(activateAtDate.getTime())) {
-    return { text: "資料異常", className: "badge-expired", order: 5 };
-  }
-
-  if (!(expireAtDate instanceof Date) || isNaN(expireAtDate.getTime())) {
-    return { text: "資料異常", className: "badge-expired", order: 5 };
-  }
-
-  if (now < activateAtDate) {
-    return { text: "未啟用", className: "badge-pending", order: 2 };
-  }
-
-  if (now > expireAtDate) {
-    return { text: "已過期", className: "badge-expired", order: 3 };
-  }
-
+  if (status === "已使用") return { text: "已使用", className: "badge-used", order: 4 };
+  if (!(activateAtDate instanceof Date) || isNaN(activateAtDate.getTime())) return { text: "資料異常", className: "badge-expired", order: 5 };
+  if (!(expireAtDate instanceof Date) || isNaN(expireAtDate.getTime())) return { text: "資料異常", className: "badge-expired", order: 5 };
+  if (now < activateAtDate) return { text: "未啟用", className: "badge-pending", order: 2 };
+  if (now > expireAtDate) return { text: "已過期", className: "badge-expired", order: 3 };
   return { text: "可使用", className: "badge-available", order: 1 };
 }
 
 function toDate(value) {
   if (!value) return null;
-
   if (value instanceof Date) return value;
-
   const str = String(value).trim();
 
-  // 支援 yyyy/MM/dd
   if (/^\d{4}\/\d{2}\/\d{2}$/.test(str)) {
     const [y, m, d] = str.split("/").map(Number);
     return new Date(y, m - 1, d, 0, 0, 0, 0);
   }
 
-  // 支援 yyyy-MM-dd
   if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
     const [y, m, d] = str.split("-").map(Number);
     return new Date(y, m - 1, d, 0, 0, 0, 0);
@@ -577,36 +489,6 @@ function escapeHtml(str) {
 
 function escapeJs(str) {
   return String(str || "").replaceAll("'", "\\'");
-}
-  async function createTransfer(couponId) {
-  try {
-    const profile = await liff.getProfile();
-
-    const result = await postToGas({
-      action: "createTransfer",
-      couponId: couponId,
-      userId: profile.userId,
-      name: profile.displayName
-    });
-
-    if (!result.success) {
-      alert(result.message || "建立轉贈連結失敗");
-      return;
-    }
-
-    const transferUrl =
-      "https://liff.line.me/2009551865-EGhyWa2w?transferToken=" +
-      encodeURIComponent(result.transferToken);
-
-    await navigator.clipboard.writeText(transferUrl);
-
-    alert("一次性轉贈連結已複製，可貼給朋友");
-
-    await loadQuota();
-  } catch (err) {
-    alert("操作失敗：" + err.message);
-    console.error(err);
-  }
 }
 
 init();
