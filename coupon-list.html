@@ -287,8 +287,10 @@
       </div>
 
       <div class="actions">
-        <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
-      </div>
+  <button class="btn-refresh" onclick="loadCoupons()">重新整理</button>
+</div>
+
+<div id="quotaInfo" class="hint"></div>
     </div>
 
     <div id="couponList" class="loading">載入中...</div>
@@ -336,6 +338,28 @@ async function postToGas(payload) {
     return JSON.parse(text);
   } catch (e) {
     throw new Error("伺服器回應格式錯誤：" + text);
+  }
+}
+ async function loadQuota() {
+  try {
+    const profile = await liff.getProfile();
+
+    const result = await postToGas({
+      action: "getQuota",
+      userId: profile.userId,
+      couponNameCode: "EMP200"
+    });
+
+    if (!result.success || !result.found) {
+      document.getElementById("quotaInfo").innerText =
+        "目前沒有可轉贈配額";
+      return;
+    }
+
+    document.getElementById("quotaInfo").innerText =
+      "可轉贈剩餘：" + result.remainQuota + " 張";
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -442,6 +466,14 @@ async function loadCoupons() {
               >
                 店員確認使用
               </button>
+
+              <button
+                class="btn-use"
+                onclick="createTransfer('${escapeJs(item.couponId)}')"
+                ${canUse ? "" : "disabled"}
+              >
+                轉贈朋友
+             </button>
             </div>
 
             <div class="small">
@@ -471,6 +503,7 @@ async function useCoupon(couponId) {
     });
 
     alert(result.message || (result.success ? "已更新為已使用" : "更新失敗"));
+    await loadQuota();
     await loadCoupons();
   } catch (err) {
     alert("操作失敗：" + err.message);
@@ -544,6 +577,36 @@ function escapeHtml(str) {
 
 function escapeJs(str) {
   return String(str || "").replaceAll("'", "\\'");
+}
+  async function createTransfer(couponId) {
+  try {
+    const profile = await liff.getProfile();
+
+    const result = await postToGas({
+      action: "createTransfer",
+      couponId: couponId,
+      userId: profile.userId,
+      name: profile.displayName
+    });
+
+    if (!result.success) {
+      alert(result.message || "建立轉贈連結失敗");
+      return;
+    }
+
+    const transferUrl =
+      "https://liff.line.me/2009551865-EGhyWa2w?transferToken=" +
+      encodeURIComponent(result.transferToken);
+
+    await navigator.clipboard.writeText(transferUrl);
+
+    alert("一次性轉贈連結已複製，可貼給朋友");
+
+    await loadQuota();
+  } catch (err) {
+    alert("操作失敗：" + err.message);
+    console.error(err);
+  }
 }
 
 init();
