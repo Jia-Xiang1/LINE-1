@@ -7,6 +7,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: "Noto Sans TC", sans-serif;
@@ -15,109 +16,260 @@
       min-height: 100vh;
       padding: 20px 14px 28px;
     }
-    .wrap { max-width: 560px; margin: 0 auto; }
-    .top-deco {
-      height: 10px; border-radius: 999px;
-      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
-      margin-bottom: 16px; box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
+
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
     }
+
+    .top-deco {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
+    }
+
     .card {
       background: rgba(255, 255, 255, 0.92);
-      border-radius: 24px; padding: 22px 18px 18px;
+      border-radius: 24px;
+      padding: 22px 18px 18px;
       box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(201, 52, 26, 0.08);
-      backdrop-filter: blur(4px); overflow: hidden; position: relative;
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+      position: relative;
     }
+
     .card::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
       background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
     }
-    .brand { text-align: center; margin-bottom: 14px; }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
     .brand-small {
-      display: inline-block; font-size: 12px; letter-spacing: 0.28em;
-      color: rgba(201, 52, 26, 0.75); margin-bottom: 8px; font-weight: 700;
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      color: rgba(201, 52, 26, 0.75);
+      margin-bottom: 8px;
+      font-weight: 700;
     }
+
     .title {
-      font-size: 28px; font-weight: 900; color: #c9341a;
-      margin-bottom: 8px; line-height: 1.2; text-align: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: #c9341a;
+      margin-bottom: 8px;
+      line-height: 1.2;
+      text-align: center;
     }
+
     .subtitle {
-      text-align: center; color: #6f6259; font-size: 14px;
-      line-height: 1.8; margin-bottom: 18px;
+      text-align: center;
+      color: #6f6259;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 18px;
     }
+
     .coupon-box {
-      position: relative; background: linear-gradient(180deg, #fffaf3 0%, #fff6ec 100%);
+      position: relative;
+      background: linear-gradient(180deg, #fffaf3 0%, #fff6ec 100%);
       border: 1.5px dashed rgba(201, 52, 26, 0.45);
-      border-radius: 20px; padding: 18px 16px; margin-bottom: 14px;
+      border-radius: 20px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
     }
-    .coupon-box::before, .coupon-box::after {
-      content: ""; position: absolute; top: 50%; width: 18px; height: 18px;
-      background: #f3eee8; border-radius: 999px; transform: translateY(-50%);
+
+    .coupon-box::before,
+    .coupon-box::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      background: #f3eee8;
+      border-radius: 999px;
+      transform: translateY(-50%);
       box-shadow: inset 0 0 0 1px rgba(201, 52, 26, 0.08);
     }
+
     .coupon-box::before { left: -9px; }
     .coupon-box::after { right: -9px; }
+
     .category {
-      display: inline-block; font-size: 12px; font-weight: 800; padding: 7px 12px;
-      border-radius: 999px; background: #fff0e7; color: #8b1a0a;
-      margin-bottom: 10px; border: 1px solid rgba(201, 52, 26, 0.1);
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #fff0e7;
+      color: #8b1a0a;
+      margin-bottom: 10px;
+      border: 1px solid rgba(201, 52, 26, 0.1);
     }
+
     .coupon-name {
-      font-size: 26px; font-weight: 900; color: #c9341a;
-      line-height: 1.3; margin-bottom: 10px; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+      font-size: 26px;
+      font-weight: 900;
+      color: #c9341a;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     }
-    .meta { font-size: 14px; color: #51463f; line-height: 2; }
-    .meta strong { color: #8b1a0a; font-weight: 800; }
+
+    .meta {
+      font-size: 14px;
+      color: #51463f;
+      line-height: 2;
+    }
+
+    .meta strong {
+      color: #8b1a0a;
+      font-weight: 800;
+    }
+
     .rule-box {
-      margin: 14px 0 8px; border-radius: 16px; background: #fff;
-      border: 1px solid rgba(201, 52, 26, 0.08); padding: 14px 14px 10px;
+      margin: 14px 0 8px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(201, 52, 26, 0.08);
+      padding: 14px 14px 10px;
     }
-    .rule-title { font-size: 13px; font-weight: 800; color: #8b1a0a; margin-bottom: 8px; }
-    .rule-list { margin: 0; padding-left: 18px; color: #665a53; font-size: 13px; line-height: 1.8; }
+
+    .rule-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #8b1a0a;
+      margin-bottom: 8px;
+    }
+
+    .rule-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #665a53;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
     button {
-      width: 100%; border: none; border-radius: 14px; padding: 15px 16px;
-      font-size: 16px; font-weight: 900; cursor: pointer; margin-top: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 16px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
     }
+
+    button:active { transform: scale(0.99); }
+
     .btn-primary {
       background: linear-gradient(135deg, #c9341a 0%, #8b1a0a 100%);
-      color: #fff; box-shadow: 0 8px 18px rgba(201, 52, 26, 0.22);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(201, 52, 26, 0.22);
     }
+
     .btn-secondary {
-      background: #fff; color: #c9341a; border: 1px solid rgba(201, 52, 26, 0.18);
+      background: #fff;
+      color: #c9341a;
+      border: 1px solid rgba(201, 52, 26, 0.18);
     }
-    .btn-primary:disabled, .btn-secondary:disabled {
-      background: #c9c9c9; color: #fff; border: none; cursor: not-allowed; box-shadow: none;
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      opacity: 0.95;
     }
-    .hint { font-size: 12px; color: #8b8078; margin-top: 10px; line-height: 1.7; text-align: center; }
+
+    .btn-primary:disabled,
+    .btn-secondary:disabled {
+      background: #c9c9c9;
+      color: #fff;
+      border: none;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #8b8078;
+      margin-top: 10px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
     .result {
-      margin-top: 16px; background: linear-gradient(180deg, #f6fff7 0%, #eef9ef 100%);
-      border: 1px solid #d6ead6; border-radius: 16px; padding: 16px;
-      line-height: 1.95; font-size: 14px; color: #30553a;
+      margin-top: 16px;
+      background: linear-gradient(180deg, #f6fff7 0%, #eef9ef 100%);
+      border: 1px solid #d6ead6;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.95;
+      font-size: 14px;
+      color: #30553a;
+      box-shadow: 0 4px 10px rgba(74, 132, 87, 0.06);
     }
+
+    .result strong {
+      color: #1f6f35;
+    }
+
     .error {
-      margin-top: 16px; background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%);
-      border: 1px solid #f0c9c4; border-radius: 16px; padding: 16px;
-      line-height: 1.8; font-size: 14px; color: #b42318;
+      margin-top: 16px;
+      background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%);
+      border: 1px solid #f0c9c4;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.8;
+      font-size: 14px;
+      color: #b42318;
+      box-shadow: 0 4px 10px rgba(180, 35, 24, 0.04);
     }
-    .footer-note { text-align: center; margin-top: 16px; font-size: 11px; color: #9b8f87; letter-spacing: 0.08em; }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #9b8f87;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 480px) {
+      .title { font-size: 24px; }
+      .coupon-name { font-size: 22px; }
+      .card { padding: 20px 14px 16px; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top-deco"></div>
+
     <div class="card">
       <div class="brand">
         <div class="brand-small">優惠券領取</div>
         <div class="title" id="pageTitle">領取你的中獎優惠券</div>
         <div class="subtitle" id="pageSubtitle">
-          請先由店員確認中獎項目，<br />再按下下方按鈕完成領券。
+          請先由店員確認中獎項目，<br />
+          再按下下方按鈕完成領券。
         </div>
       </div>
 
       <div class="coupon-box">
         <div id="category" class="category">載入中...</div>
         <div id="couponName" class="coupon-name">載入中...</div>
+
         <div class="meta">
           <div><strong>活動類別：</strong><span id="eventTypeText">載入中...</span></div>
           <div><strong>品項代碼：</strong><span id="couponNameCodeText">載入中...</span></div>
@@ -134,20 +286,32 @@
         </ol>
       </div>
 
-      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()">確認領券</button>
-      <button class="btn-secondary" onclick="goToCouponList()">前往我的優惠券</button>
+      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()">
+        確認領券
+      </button>
 
-      <div class="hint">若連續重複點擊，系統可能會阻擋重複領取。</div>
+      <button class="btn-secondary" onclick="goToCouponList()">
+        前往我的優惠券
+      </button>
+
+      <div class="hint">
+        若連續重複點擊，系統可能會阻擋重複領取。
+      </div>
+
       <div id="messageArea"></div>
-      <div class="footer-note">領券成功後將自動跳轉至我的優惠券頁面</div>
+
+      <div class="footer-note">
+        領券成功後將自動跳轉至我的優惠券頁面
+      </div>
     </div>
   </div>
 
 <script>
 const liffId = "2009551865-EGhyWa2w";
-const gasUrl = "https://script.google.com/macros/s/AKfycbzZaMeWPz5JRwWx_0qV19wWRsILGEWeUQ7yBGbPDgeA3Exyt1qz6GR4rRDkkX1wdFiC/exec";
+const gasUrl = "https://script.google.com/macros/s/AKfycbwqg9sXbHXW4bI5zfGU2VBfs5w1cPqt0RalPjCDqG0sYGOvzYu-ITol2ZIvPKWCifjR/exec";
 const couponListUrl = "https://liff.line.me/2009551865-e6Y0VCE6";
 let redirectTimer = null;
+let transferPreviewData = null;
 
 function getParam(name) {
   const url = new URL(window.location.href);
@@ -156,10 +320,27 @@ function getParam(name) {
 
 function getTodayYMD() {
   const d = new Date();
-  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}/${m}/${day}`;
+}
+
+function isTransferMode() {
+  return !!getParam("transferToken");
 }
 
 function getRawCouponData() {
+  if (isTransferMode() && transferPreviewData) {
+    return {
+      eventType: transferPreviewData.eventType || "未指定活動",
+      couponName: transferPreviewData.couponName || "未指定券名",
+      couponNameCode: transferPreviewData.couponNameCode || "X00",
+      category: transferPreviewData.category || "其他",
+      source: transferPreviewData.source || "QR/NFC"
+    };
+  }
+
   return {
     eventType: getParam("eventType") || "未指定活動",
     couponName: getParam("couponName") || getParam("coupon") || "未指定券名",
@@ -169,15 +350,31 @@ function getRawCouponData() {
   };
 }
 
-function isTransferMode() {
-  return !!getParam("transferToken");
-}
-
 function getCouponConfig() {
   const raw = getRawCouponData();
   const today = getTodayYMD();
 
   if (isTransferMode()) {
+    // 若為 EMP200，轉贈頁也顯示正確員工券資訊
+    if (raw.couponNameCode === "EMP200") {
+      return {
+        ...raw,
+        eventType: raw.eventType || "員工專屬",
+        couponName: raw.couponName || "200元餐飲券",
+        category: raw.category || "員工",
+        activateRuleText: "發放當天即可使用",
+        expireRuleText: "固定到 2026/04/30",
+        rules: [
+          "此為好友轉贈的一次性領券連結。",
+          "領取成功後，此連結即失效。",
+          "本券領取當天即可使用。",
+          "使用期限至 2026/04/30。"
+        ],
+        fixedActivateDate: today,
+        fixedExpireDate: "2026/04/30"
+      };
+    }
+
     return {
       ...raw,
       eventType: raw.eventType || "好友轉贈",
@@ -190,7 +387,9 @@ function getCouponConfig() {
         "領取成功後，此連結即失效。",
         "若為員工專屬券，將依對應規則啟用與到期。",
         "領取後請至我的優惠券查看。"
-      ]
+      ],
+      fixedActivateDate: "",
+      fixedExpireDate: ""
     };
   }
 
@@ -207,7 +406,9 @@ function getCouponConfig() {
         "領取當天即可使用。",
         "使用期限至 2026/04/30。",
         "使用時請出示券包頁面，由店員確認使用。"
-      ]
+      ],
+      fixedActivateDate: today,
+      fixedExpireDate: "2026/04/30"
     };
   }
 
@@ -219,7 +420,9 @@ function getCouponConfig() {
       "領取日隔天起才可使用。",
       "啟用日起算 7 天內有效。",
       "使用時請出示券包頁面，由店員確認使用。"
-    ]
+    ],
+    fixedActivateDate: "",
+    fixedExpireDate: ""
   };
 }
 
@@ -231,26 +434,77 @@ function applyCouponView(config) {
   document.getElementById("sourceText").innerText = config.source;
   document.getElementById("enableRuleText").innerText = config.activateRuleText;
   document.getElementById("expireRuleText").innerText = config.expireRuleText;
-  document.getElementById("ruleList").innerHTML = config.rules.map(rule => `<li>${escapeHtml(rule)}</li>`).join("");
+
+  document.getElementById("ruleList").innerHTML = config.rules
+    .map(rule => `<li>${escapeHtml(rule)}</li>`)
+    .join("");
 }
 
 function applyTransferModeText() {
   if (!isTransferMode()) return;
+
   document.getElementById("pageTitle").innerText = "領取好友轉贈優惠券";
-  document.getElementById("pageSubtitle").innerHTML = "你收到一張好友轉贈的優惠券，<br />請按下方按鈕完成領取。";
+  document.getElementById("pageSubtitle").innerHTML =
+    "你收到一張好友轉贈的優惠券，<br />請按下方按鈕完成領取。";
+}
+
+async function postToGas(payload) {
+  const formBody = new URLSearchParams(payload).toString();
+
+  const res = await fetch(gasUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formBody
+  });
+
+  const text = await res.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error("伺服器回應格式錯誤：" + text);
+  }
+}
+
+async function loadTransferPreview() {
+  const transferToken = getParam("transferToken");
+  if (!transferToken) return;
+
+  const result = await postToGas({
+    action: "getTransferInfo",
+    transferToken: transferToken
+  });
+
+  if (!result.success) {
+    throw new Error(result.message || "轉贈連結無法使用");
+  }
+
+  transferPreviewData = result.item || null;
 }
 
 async function init() {
   try {
     await liff.init({ liffId });
+
     if (!liff.isLoggedIn()) {
       liff.login();
       return;
     }
+
     applyTransferModeText();
-    applyCouponView(getCouponConfig());
+
+    if (isTransferMode()) {
+      await loadTransferPreview();
+    }
+
+    const config = getCouponConfig();
+    applyCouponView(config);
   } catch (err) {
-    renderError("LIFF 初始化失敗：" + err.message);
+    renderError(err.message || "頁面初始化失敗");
+    document.getElementById("claimBtn").disabled = true;
+    console.error(err);
   }
 }
 
@@ -260,20 +514,6 @@ async function getProfile() {
     return null;
   }
   return await liff.getProfile();
-}
-
-async function postToGas(payload) {
-  const res = await fetch(gasUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(payload).toString()
-  });
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error("伺服器回應格式錯誤：" + text);
-  }
 }
 
 async function claimCoupon() {
@@ -295,7 +535,7 @@ async function claimCoupon() {
     const payload = transferToken
       ? {
           action: "claimTransfer",
-          transferToken,
+          transferToken: transferToken,
           userId: profile.userId,
           name: profile.displayName
         }
@@ -319,51 +559,85 @@ async function claimCoupon() {
       return;
     }
 
-    renderSuccess(result.item, !!transferToken);
+    renderSuccess(result.item, config, !!transferToken);
+    btn.disabled = true;
     btn.innerText = "已完成領券";
   } catch (err) {
     renderError("領券失敗：" + err.message);
+    console.error(err);
     const btn = document.getElementById("claimBtn");
     btn.disabled = false;
     btn.innerText = "確認領券";
   }
 }
 
-function renderSuccess(item, isTransfer) {
+function renderSuccess(item, config, isTransfer) {
+  const claimedAt = item.claimedAt || "";
+  const activateAt = item.activateAt || config.fixedActivateDate || "";
+  const expireAt = item.expireAt || config.fixedExpireDate || "";
+
   const html = `
     <div class="result">
       <div><strong>${isTransfer ? "轉贈領券成功 🎉" : "領券成功 🎉"}</strong></div>
-      <div><strong>活動類別：</strong>${escapeHtml(item.eventType)}</div>
-      <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode)}</div>
-      <div><strong>名稱：</strong>${escapeHtml(item.couponName)}</div>
-      <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
-      <div><strong>領取日：</strong>${formatDate(item.claimedAt)}</div>
-      <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
-      <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
+      <div><strong>活動類別：</strong>${escapeHtml(item.eventType || config.eventType)}</div>
+      <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode || config.couponNameCode)}</div>
+      <div><strong>名稱：</strong>${escapeHtml(item.couponName || config.couponName)}</div>
+      <div><strong>分類：</strong>${escapeHtml(item.category || config.category)}</div>
+      <div><strong>領取日：</strong>${formatDate(claimedAt)}</div>
+      <div><strong>啟用日：</strong>${formatDate(activateAt)}</div>
+      <div><strong>到期日：</strong>${formatDate(expireAt)}</div>
       <div><strong>狀態：</strong>${escapeHtml(item.status || "可使用")}</div>
       <div><strong>券號：</strong>${escapeHtml(item.couponId || "")}</div>
-      <div style="margin-top:12px;">5 秒後自動跳轉至我的優惠券...</div>
+
+      <div style="margin-top:12px; color:#4b6f55; font-size:14px;">
+        5 秒後自動跳轉至我的優惠券...
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="btn-secondary" onclick="goToCouponList()">
+          前往我的優惠券
+        </button>
+      </div>
     </div>
   `;
+
   document.getElementById("messageArea").innerHTML = html;
-  if (redirectTimer) clearTimeout(redirectTimer);
-  redirectTimer = setTimeout(goToCouponList, 5000);
+
+  if (redirectTimer) {
+    clearTimeout(redirectTimer);
+  }
+
+  redirectTimer = setTimeout(() => {
+    goToCouponList();
+  }, 5000);
 }
 
 function renderError(message) {
-  document.getElementById("messageArea").innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+  document.getElementById("messageArea").innerHTML = `
+    <div class="error">${escapeHtml(message)}</div>
+  `;
 }
 
 function goToCouponList() {
-  if (redirectTimer) clearTimeout(redirectTimer);
-  window.location.href = couponListUrl;
+  if (redirectTimer) {
+    clearTimeout(redirectTimer);
+    redirectTimer = null;
+  }
+
+  if (couponListUrl) {
+    window.location.href = couponListUrl;
+  }
 }
 
 function formatDate(value) {
   if (!value) return "";
-  if (/^\d{4}\/\d{2}\/\d{2}$/.test(String(value))) return value;
+
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(String(value))) {
+    return value;
+  }
+
   const d = new Date(value);
-  if (isNaN(d.getTime())) return String(value || "");
+  if (isNaN(d.getTime())) return value || "";
   return d.toLocaleString("zh-TW");
 }
 
