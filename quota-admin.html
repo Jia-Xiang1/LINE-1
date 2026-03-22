@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>員工配額管理</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Noto Sans TC", sans-serif;
+      background: radial-gradient(circle at top, #fff7ef 0%, #f8f1e7 35%, #f3eee8 100%);
+      color: #2d1500; min-height: 100vh; padding: 20px 14px 28px;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    .top-deco {
+      height: 10px; border-radius: 999px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+      margin-bottom: 16px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.94); border-radius: 24px; padding: 22px 18px 18px;
+      box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(201, 52, 26, 0.08); position: relative; overflow: hidden; margin-bottom: 16px;
+    }
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+    }
+    .brand-small {
+      display: inline-block; font-size: 12px; letter-spacing: 0.28em;
+      color: rgba(201, 52, 26, 0.75); margin-bottom: 8px; font-weight: 700;
+    }
+    .title { font-size: 28px; font-weight: 900; color: #c9341a; margin-bottom: 8px; }
+    .subtitle { color: #6f6259; font-size: 14px; line-height: 1.8; }
+    .profile-box {
+      margin-top: 12px; background: #fff8f0; border: 1px solid rgba(201, 52, 26, 0.12);
+      border-radius: 14px; padding: 12px 14px; color: #8b1a0a; font-size: 13px; line-height: 1.8; word-break: break-all;
+    }
+    .form-grid { display: grid; gap: 12px; margin-top: 16px; }
+    .form-row { display: grid; gap: 8px; }
+    label { font-size: 13px; font-weight: 800; color: #8b1a0a; }
+    input, select, textarea {
+      width: 100%; border: 1px solid rgba(201, 52, 26, 0.18);
+      border-radius: 14px; padding: 12px 14px; font-size: 14px; background: #fffdfb; outline: none;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    button {
+      border: none; border-radius: 14px; padding: 12px 16px;
+      font-size: 14px; font-weight: 900; cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #c9341a 0%, #8b1a0a 100%);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #fff; color: #c9341a; border: 1px solid rgba(201, 52, 26, 0.18);
+    }
+    .status {
+      margin-top: 12px; padding: 12px 14px; border-radius: 14px;
+      font-size: 13px; line-height: 1.8; display: none;
+    }
+    .status.success { display: block; background: #e9f8ec; color: #187a2f; }
+    .status.error { display: block; background: #fdeaea; color: #b42318; }
+    .list-title { font-size: 18px; font-weight: 900; color: #8b1a0a; margin-bottom: 12px; }
+    .quota-item {
+      background: #fffaf4; border: 1px dashed rgba(201, 52, 26, 0.18);
+      border-radius: 16px; padding: 14px; margin-bottom: 10px;
+    }
+    .quota-item strong { color: #8b1a0a; }
+    .quota-meta { font-size: 14px; line-height: 1.95; color: #4c433d; }
+    .quota-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .small { font-size: 12px; color: #8f847d; margin-top: 8px; line-height: 1.7; }
+    .loading, .empty, .error-box { padding: 16px; border-radius: 16px; background: #fff; }
+    .error-box { color: #b42318; background: #fff5f4; border: 1px solid #f0c9c4; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-deco"></div>
+
+    <div class="card">
+      <div class="brand-small">管理頁</div>
+      <div class="title">員工配額管理</div>
+      <div class="subtitle">
+        可直接在 LINE 內新增、修改員工的券種配額。<br />
+        建議只開放給管理人使用。
+      </div>
+
+      <div id="profileBox" class="profile-box">載入中...</div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="targetUserId">員工 userId</label>
+          <input id="targetUserId" type="text" placeholder="請貼上員工 LINE userId">
+        </div>
+
+        <div class="form-row">
+          <label for="targetName">員工姓名</label>
+          <input id="targetName" type="text" placeholder="例如：王小明">
+        </div>
+
+        <div class="form-row">
+          <label for="targetCouponNameCode">券種代碼</label>
+          <input id="targetCouponNameCode" type="text" value="EMP200" placeholder="例如：EMP200">
+        </div>
+
+        <div class="form-row">
+          <label for="totalQuota">總配額</label>
+          <input id="totalQuota" type="number" min="0" step="1" value="0">
+        </div>
+
+        <div class="form-row">
+          <label for="enabled">啟用狀態</label>
+          <select id="enabled">
+            <option value="是">是</option>
+            <option value="否">否</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="note">備註</label>
+          <textarea id="note" placeholder="可填寫用途或說明"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="saveQuota()">儲存配額</button>
+        <button class="btn-secondary" onclick="loadQuotaList()">重新讀取</button>
+        <button class="btn-secondary" onclick="fillMyUserId()">帶入我的 userId</button>
+      </div>
+
+      <div id="statusBox" class="status"></div>
+    </div>
+
+    <div class="card">
+      <div class="list-title">目前員工配額</div>
+      <div id="quotaList" class="loading">載入中...</div>
+      <div class="small">點選「帶入表單」後，可快速修改該員工配額。</div>
+    </div>
+  </div>
+
+<script>
+const liffId = "你的新管理頁LIFF_ID";
+const gasUrl = "你的AppsScript部署網址";
+
+let myProfile = null;
+
+async function init() {
+  try {
+    await liff.init({ liffId });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+
+    myProfile = await liff.getProfile();
+
+    document.getElementById("profileBox").innerHTML =
+      `目前登入：<strong>${escapeHtml(myProfile.displayName || "")}</strong><br>` +
+      `你的 userId：${escapeHtml(myProfile.userId || "")}`;
+
+    await loadQuotaList();
+  } catch (err) {
+    setStatus("初始化失敗：" + err.message, "error");
+  }
+}
+
+async function postToGas(payload) {
+  const res = await fetch(gasUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(payload).toString()
+  });
+
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("伺服器回應格式錯誤：" + text);
+  }
+}
+
+function setStatus(message, type) {
+  const box = document.getElementById("statusBox");
+  box.className = "status " + type;
+  box.textContent = message;
+}
+
+function fillMyUserId() {
+  if (!myProfile) return;
+  document.getElementById("targetUserId").value = myProfile.userId || "";
+}
+
+async function saveQuota() {
+  try {
+    if (!myProfile) return;
+
+    const targetUserId = document.getElementById("targetUserId").value.trim();
+    const targetName = document.getElementById("targetName").value.trim();
+    const targetCouponNameCode = document.getElementById("targetCouponNameCode").value.trim();
+    const totalQuota = document.getElementById("totalQuota").value.trim();
+    const enabled = document.getElementById("enabled").value;
+    const note = document.getElementById("note").value.trim();
+
+    const result = await postToGas({
+      action: "adminSaveQuota",
+      userId: myProfile.userId,
+      targetUserId,
+      targetName,
+      targetCouponNameCode,
+      totalQuota,
+      enabled,
+      note
+    });
+
+    if (!result.success) {
+      setStatus(result.message || "儲存失敗", "error");
+      return;
+    }
+
+    setStatus(result.message || "儲存成功", "success");
+    await loadQuotaList();
+  } catch (err) {
+    setStatus("儲存失敗：" + err.message, "error");
+  }
+}
+
+async function loadQuotaList() {
+  try {
+    if (!myProfile) return;
+
+    document.getElementById("quotaList").innerHTML = "載入中...";
+
+    const result = await postToGas({
+      action: "adminListQuota",
+      userId: myProfile.userId
+    });
+
+    if (!result.success) {
+      document.getElementById("quotaList").innerHTML =
+        `<div class="error-box">${escapeHtml(result.message || "讀取失敗")}</div>`;
+      return;
+    }
+
+    if (!result.items || result.items.length === 0) {
+      document.getElementById("quotaList").innerHTML =
+        `<div class="empty">目前沒有任何員工配額資料</div>`;
+      return;
+    }
+
+    document.getElementById("quotaList").innerHTML = result.items.map(item => `
+      <div class="quota-item">
+        <div class="quota-meta">
+          <div><strong>姓名：</strong>${escapeHtml(item.name)}</div>
+          <div><strong>userId：</strong>${escapeHtml(item.userId)}</div>
+          <div><strong>券種：</strong>${escapeHtml(item.couponNameCode)}</div>
+          <div><strong>總配額：</strong>${escapeHtml(item.totalQuota)}</div>
+          <div><strong>已成功：</strong>${escapeHtml(item.usedQuota)}</div>
+          <div><strong>剩餘：</strong>${escapeHtml(item.remainQuota)}</div>
+          <div><strong>啟用：</strong>${escapeHtml(item.enabled)}</div>
+          <div><strong>備註：</strong>${escapeHtml(item.note)}</div>
+        </div>
+
+        <div class="quota-btns">
+          <button class="btn-secondary" onclick='loadIntoForm(${JSON.stringify(JSON.stringify(item))})'>
+            帶入表單
+          </button>
+        </div>
+      </div>
+    `).join("");
+  } catch (err) {
+    document.getElementById("quotaList").innerHTML =
+      `<div class="error-box">讀取失敗：${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function loadIntoForm(itemJson) {
+  const item = JSON.parse(itemJson);
+  document.getElementById("targetUserId").value = item.userId || "";
+  document.getElementById("targetName").value = item.name || "";
+  document.getElementById("targetCouponNameCode").value = item.couponNameCode || "";
+  document.getElementById("totalQuota").value = item.totalQuota || 0;
+  document.getElementById("enabled").value = item.enabled || "是";
+  document.getElementById("note").value = item.note || "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+init();
+</script>
+</body>
+</html>
