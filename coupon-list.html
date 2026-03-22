@@ -362,7 +362,10 @@ async function loadCoupons() {
       const activateAtDate = toDate(item.activateAt);
       const usedAtDate = item.usedAt ? toDate(item.usedAt) : null;
       const expireAtDate = toDate(item.expireAt);
-      const displayStatus = getDisplayStatus(item.status, activateAtDate, expireAtDate);
+
+      // 若 GAS 沒回 status，也用日期推算
+      const status = item.status || "";
+      const displayStatus = getDisplayStatus(status, activateAtDate, expireAtDate);
 
       return {
         ...item,
@@ -375,24 +378,26 @@ async function loadCoupons() {
     });
 
     items.sort((a, b) => {
-      if (a.eventType !== b.eventType) {
-        return a.eventType.localeCompare(b.eventType, "zh-Hant");
+      if ((a.eventType || "") !== (b.eventType || "")) {
+        return (a.eventType || "").localeCompare((b.eventType || ""), "zh-Hant");
       }
 
-      if (a.category !== b.category) {
-        return a.category.localeCompare(b.category, "zh-Hant");
+      if ((a.category || "") !== (b.category || "")) {
+        return (a.category || "").localeCompare((b.category || ""), "zh-Hant");
       }
 
       if (a.displayStatus.order !== b.displayStatus.order) {
         return a.displayStatus.order - b.displayStatus.order;
       }
 
-      return a.expireAtDate - b.expireAtDate;
+      const aExpire = a.expireAtDate instanceof Date && !isNaN(a.expireAtDate) ? a.expireAtDate.getTime() : Number.MAX_SAFE_INTEGER;
+      const bExpire = b.expireAtDate instanceof Date && !isNaN(b.expireAtDate) ? b.expireAtDate.getTime() : Number.MAX_SAFE_INTEGER;
+      return aExpire - bExpire;
     });
 
     const groups = {};
     items.forEach(item => {
-      const groupKey = `${item.eventType}｜${item.category}`;
+      const groupKey = `${item.eventType || "未分類活動"}｜${item.category || "未分類"}`;
       if (!groups[groupKey]) groups[groupKey] = [];
       groups[groupKey].push(item);
     });
@@ -480,6 +485,14 @@ function getDisplayStatus(status, activateAtDate, expireAtDate) {
     return { text: "已使用", className: "badge-used", order: 4 };
   }
 
+  if (!(activateAtDate instanceof Date) || isNaN(activateAtDate.getTime())) {
+    return { text: "資料異常", className: "badge-expired", order: 5 };
+  }
+
+  if (!(expireAtDate instanceof Date) || isNaN(expireAtDate.getTime())) {
+    return { text: "資料異常", className: "badge-expired", order: 5 };
+  }
+
   if (now < activateAtDate) {
     return { text: "未啟用", className: "badge-pending", order: 2 };
   }
@@ -492,7 +505,27 @@ function getDisplayStatus(status, activateAtDate, expireAtDate) {
 }
 
 function toDate(value) {
-  return new Date(value);
+  if (!value) return null;
+
+  if (value instanceof Date) return value;
+
+  const str = String(value).trim();
+
+  // 支援 yyyy/MM/dd
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(str)) {
+    const [y, m, d] = str.split("/").map(Number);
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  // 支援 yyyy-MM-dd
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const [y, m, d] = str.split("-").map(Number);
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return null;
+  return d;
 }
 
 function formatDate(d) {
