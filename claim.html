@@ -274,16 +274,15 @@
           <div><strong>活動類別：</strong><span id="eventTypeText">載入中...</span></div>
           <div><strong>品項代碼：</strong><span id="couponNameCodeText">載入中...</span></div>
           <div><strong>來源：</strong><span id="sourceText">載入中...</span></div>
-          <div><strong>狀態：</strong>領取後建立優惠券</div>
+          <div><strong>啟用規則：</strong><span id="enableRuleText">載入中...</span></div>
+          <div><strong>到期規則：</strong><span id="expireRuleText">載入中...</span></div>
         </div>
       </div>
 
       <div class="rule-box">
         <div class="rule-title">使用規則</div>
-        <ol class="rule-list">
-          <li>領取日隔天起才可使用。</li>
-          <li>啟用日起算 7 天內有效。</li>
-          <li>使用時請出示券包頁面，由店員確認使用。</li>
+        <ol class="rule-list" id="ruleList">
+          <li>載入中...</li>
         </ol>
       </div>
 
@@ -318,24 +317,94 @@ function getParam(name) {
   return url.searchParams.get(name) || "";
 }
 
-function getEventType() {
-  return getParam("eventType") || "未指定活動";
+function getTodayYMD() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}/${m}/${day}`;
 }
 
-function getCouponName() {
-  return getParam("couponName") || getParam("coupon") || "未指定券名";
+function parseYMDToDate(ymd) {
+  if (!ymd) return null;
+  const normalized = String(ymd).replaceAll("-", "/");
+  const [y, m, d] = normalized.split("/").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d, 0, 0, 0, 0);
 }
 
-function getCouponNameCode() {
-  return getParam("couponNameCode") || "X00";
+function formatYMD(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}/${m}/${d}`;
 }
 
-function getCategory() {
-  return getParam("category") || "其他";
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
 }
 
-function getSource() {
-  return getParam("from") || "QR/NFC";
+function getRawCouponData() {
+  return {
+    eventType: getParam("eventType") || "未指定活動",
+    couponName: getParam("couponName") || getParam("coupon") || "未指定券名",
+    couponNameCode: getParam("couponNameCode") || "X00",
+    category: getParam("category") || "其他",
+    source: getParam("from") || "QR/NFC"
+  };
+}
+
+function getCouponConfig() {
+  const raw = getRawCouponData();
+  const today = getTodayYMD();
+
+  if (raw.couponNameCode === "EMP200") {
+    return {
+      ...raw,
+      eventType: "員工專屬",
+      category: "員工",
+      couponName: "200元餐飲券",
+      activateRuleText: "發放當天即可使用",
+      expireRuleText: "固定到 2026/04/30",
+      rules: [
+        "本券為員工專屬券。",
+        "領取當天即可使用。",
+        "使用期限至 2026/04/30。",
+        "使用時請出示券包頁面，由店員確認使用。"
+      ],
+      fixedActivateDate: today,
+      fixedExpireDate: "2026/04/30"
+    };
+  }
+
+  return {
+    ...raw,
+    activateRuleText: "領取日隔天起可使用",
+    expireRuleText: "啟用日起算 7 天內有效",
+    rules: [
+      "領取日隔天起才可使用。",
+      "啟用日起算 7 天內有效。",
+      "使用時請出示券包頁面，由店員確認使用。"
+    ],
+    fixedActivateDate: "",
+    fixedExpireDate: ""
+  };
+}
+
+function applyCouponView(config) {
+  document.getElementById("couponName").innerText = config.couponName;
+  document.getElementById("category").innerText = config.category;
+  document.getElementById("eventTypeText").innerText = config.eventType;
+  document.getElementById("couponNameCodeText").innerText = config.couponNameCode;
+  document.getElementById("sourceText").innerText = config.source;
+  document.getElementById("enableRuleText").innerText = config.activateRuleText;
+  document.getElementById("expireRuleText").innerText = config.expireRuleText;
+
+  document.getElementById("ruleList").innerHTML = config.rules
+    .map(rule => `<li>${escapeHtml(rule)}</li>`)
+    .join("");
 }
 
 async function init() {
@@ -347,11 +416,8 @@ async function init() {
       return;
     }
 
-    document.getElementById("couponName").innerText = getCouponName();
-    document.getElementById("category").innerText = getCategory();
-    document.getElementById("eventTypeText").innerText = getEventType();
-    document.getElementById("couponNameCodeText").innerText = getCouponNameCode();
-    document.getElementById("sourceText").innerText = getSource();
+    const config = getCouponConfig();
+    applyCouponView(config);
   } catch (err) {
     renderError("LIFF 初始化失敗：" + err.message);
     console.error(err);
@@ -399,16 +465,27 @@ async function claimCoupon() {
       return;
     }
 
-    const result = await postToGas({
+    const config = getCouponConfig();
+
+    const payload = {
       action: "claim",
       userId: profile.userId,
       name: profile.displayName,
-      eventType: getEventType(),
-      couponName: getCouponName(),
-      category: getCategory(),
-      source: getSource(),
-      couponNameCode: getCouponNameCode()
-    });
+      eventType: config.eventType,
+      couponName: config.couponName,
+      category: config.category,
+      source: config.source,
+      couponNameCode: config.couponNameCode
+    };
+
+    // EMP200 額外固定傳值，方便 GAS 直接採用
+    if (config.couponNameCode === "EMP200") {
+      payload.activateAt = config.fixedActivateDate;
+      payload.expireAt = config.fixedExpireDate;
+      payload.ruleType = "employee_same_day_fixed";
+    }
+
+    const result = await postToGas(payload);
 
     if (!result.success) {
       renderError(result.message || "領券失敗");
@@ -417,7 +494,7 @@ async function claimCoupon() {
       return;
     }
 
-    renderSuccess(result.item);
+    renderSuccess(result.item, config);
     btn.disabled = true;
     btn.innerText = "已完成領券";
   } catch (err) {
@@ -429,19 +506,23 @@ async function claimCoupon() {
   }
 }
 
-function renderSuccess(item) {
+function renderSuccess(item, config) {
+  const claimedAt = item.claimedAt || "";
+  const activateAt = item.activateAt || config.fixedActivateDate || "";
+  const expireAt = item.expireAt || config.fixedExpireDate || "";
+
   const html = `
     <div class="result">
       <div><strong>領券成功 🎉</strong></div>
-      <div><strong>活動類別：</strong>${escapeHtml(item.eventType)}</div>
-      <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode)}</div>
-      <div><strong>名稱：</strong>${escapeHtml(item.couponName)}</div>
-      <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
-      <div><strong>領取日：</strong>${formatDate(item.claimedAt)}</div>
-      <div><strong>啟用日：</strong>${formatDate(item.activateAt)}</div>
-      <div><strong>到期日：</strong>${formatDate(item.expireAt)}</div>
-      <div><strong>狀態：</strong>${escapeHtml(item.status)}</div>
-      <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+      <div><strong>活動類別：</strong>${escapeHtml(item.eventType || config.eventType)}</div>
+      <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode || config.couponNameCode)}</div>
+      <div><strong>名稱：</strong>${escapeHtml(item.couponName || config.couponName)}</div>
+      <div><strong>分類：</strong>${escapeHtml(item.category || config.category)}</div>
+      <div><strong>領取日：</strong>${formatDate(claimedAt)}</div>
+      <div><strong>啟用日：</strong>${formatDate(activateAt)}</div>
+      <div><strong>到期日：</strong>${formatDate(expireAt)}</div>
+      <div><strong>狀態：</strong>${escapeHtml(item.status || "可使用")}</div>
+      <div><strong>券號：</strong>${escapeHtml(item.couponId || "")}</div>
 
       <div style="margin-top:12px; color:#4b6f55; font-size:14px;">
         5 秒後自動跳轉至我的優惠券...
@@ -484,6 +565,12 @@ function goToCouponList() {
 }
 
 function formatDate(value) {
+  if (!value) return "";
+
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(String(value))) {
+    return value;
+  }
+
   const d = new Date(value);
   if (isNaN(d.getTime())) return value || "";
   return d.toLocaleString("zh-TW");
