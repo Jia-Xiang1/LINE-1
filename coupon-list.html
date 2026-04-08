@@ -2,671 +2,229 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>我的優惠券</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: "Noto Sans TC", sans-serif;
-      background: radial-gradient(circle at top, #fff7ef 0%, #f8f1e7 35%, #f3eee8 100%);
-      color: #2d1500;
-      min-height: 100vh;
-      padding: 20px 14px 28px;
+      background: #f5f6f8;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
+      color: #111;
     }
-
     .wrap {
-      max-width: 780px;
+      max-width: 720px;
       margin: 0 auto;
+      padding: 20px 14px 40px;
+      box-sizing: border-box;
     }
-
-    .top-deco {
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
-    }
-
-    .header-card {
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 24px;
-      padding: 22px 18px 18px;
-      box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
-      border: 1px solid rgba(201, 52, 26, 0.08);
-      backdrop-filter: blur(4px);
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 18px;
-    }
-
-    .header-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
-    }
-
-    .brand-small {
-      display: inline-block;
-      font-size: 12px;
-      letter-spacing: 0.28em;
-      color: rgba(201, 52, 26, 0.75);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
     .title {
       font-size: 28px;
-      font-weight: 900;
-      color: #c9341a;
-      margin-bottom: 8px;
-      line-height: 1.2;
+      font-weight: 800;
+      margin: 0 0 18px;
     }
-
-    .subtitle {
-      color: #6f6259;
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .hint {
-      margin-top: 10px;
-      color: #8b8078;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .quota-box {
-      margin-top: 12px;
-      background: #fff8f0;
-      border: 1px solid rgba(201, 52, 26, 0.12);
-      border-radius: 14px;
-      padding: 12px 14px;
-      color: #8b1a0a;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .actions {
-      margin-top: 14px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      border: none;
-      border-radius: 14px;
-      padding: 11px 15px;
-      font-size: 14px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
-    }
-
-    button:active { transform: scale(0.99); }
-
-    .btn-refresh {
+    .empty {
       background: #fff;
-      color: #c9341a;
-      border: 1px solid rgba(201, 52, 26, 0.18);
+      border-radius: 18px;
+      padding: 28px 16px;
+      text-align: center;
+      color: #666;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
-
-    .btn-refresh:hover {
-      opacity: 0.95;
-    }
-
-    .section-title {
-      margin: 22px 0 12px;
-      font-size: 18px;
-      font-weight: 900;
-      color: #8b1a0a;
-      padding-left: 4px;
-    }
-
     .coupon-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 22px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(86, 45, 10, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
-      border: 1px solid rgba(201, 52, 26, 0.08);
-      position: relative;
-      overflow: hidden;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
-
-    .coupon-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 6px;
-      bottom: 0;
-      background: linear-gradient(180deg, #c9341a 0%, #d7a423 100%);
-      opacity: 0.9;
-    }
-
-    .coupon-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-      padding-left: 8px;
-    }
-
     .coupon-name {
-      font-size: 20px;
-      font-weight: 900;
-      color: #c9341a;
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 10px;
       line-height: 1.4;
     }
-
+    .coupon-meta {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.8;
+    }
+    .badge-row {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
     .badge {
       display: inline-block;
-      padding: 7px 11px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+      font-size: 13px;
+      font-weight: 700;
     }
-
-    .badge-pending {
-      background: #fff2cc;
-      color: #8a6d1d;
+    .badge-type {
+      background: #111;
+      color: #fff;
     }
-
-    .badge-available {
-      background: #e9f8ec;
-      color: #187a2f;
+    .badge-status-default {
+      background: #f0f0f0;
+      color: #333;
     }
-
-    .badge-used {
-      background: #ececec;
-      color: #666;
+    .badge-status-pending {
+      background: #fff3cd;
+      color: #8a6300;
     }
-
-    .badge-expired {
-      background: #fdeaea;
-      color: #b42318;
+    .badge-status-used {
+      background: #e3f2fd;
+      color: #0d47a1;
     }
-
-    .meta-box {
-      margin-left: 8px;
-      background: #fffaf4;
-      border: 1px dashed rgba(201, 52, 26, 0.18);
-      border-radius: 16px;
-      padding: 12px 14px;
+    .badge-status-expired {
+      background: #fbe9e7;
+      color: #bf360c;
     }
-
-    .meta {
-      font-size: 14px;
-      line-height: 1.95;
-      color: #4c433d;
-    }
-
-    .meta strong {
-      color: #8b1a0a;
-      font-weight: 800;
-    }
-
-    .card-actions {
+    .note-box {
       margin-top: 14px;
-      margin-left: 8px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f8f8f8;
+      border: 1px solid #ececec;
     }
-
-    .btn-use {
-      background: linear-gradient(135deg, #c9341a 0%, #8b1a0a 100%);
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(201, 52, 26, 0.16);
+    .note-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #333;
     }
-
-    .btn-use:hover {
-      opacity: 0.96;
-    }
-
-    .btn-use:disabled {
-      background: #c9c9c9;
-      color: #fff;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .small {
-      font-size: 12px;
-      color: #8f847d;
-      margin-top: 8px;
-      margin-left: 8px;
+    .note-content {
+      font-size: 14px;
+      color: #555;
       line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
-
-    .empty,
-    .loading,
-    .error {
-      background: rgba(255,255,255,0.94);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 8px 24px rgba(86, 45, 10, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
-      border: 1px solid rgba(201, 52, 26, 0.08);
-    }
-
-    .error {
-      color: #b42318;
-      background: linear-gradient(180deg, #fff5f4 0%, #fff0ef 100%);
-      border: 1px solid #f0c9c4;
-    }
-
-    .footer-note {
-      text-align: center;
-      margin-top: 18px;
-      font-size: 11px;
-      color: #9b8f87;
-      letter-spacing: 0.08em;
-    }
-
-    @media (max-width: 520px) {
-      .title { font-size: 24px; }
-      .coupon-name { font-size: 18px; }
-      .coupon-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .card-actions {
-        flex-direction: column;
-      }
+    .small-tip {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #777;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="top-deco"></div>
-
-    <div class="header-card">
-      <div class="brand-small">我的優惠券</div>
-      <div class="title">查看你的已領優惠券</div>
-      <div class="subtitle">
-        可查看各券別詳細狀態。<br />
-        顧客出示本畫面後，由店員於此頁面下方按下「店員確認使用」。
-      </div>
-      <div class="hint">
-        排序方式：先依活動類別，再依分類分組；同組內快到期且可使用的券會優先顯示。
-      </div>
-
-      <div id="quotaInfo" class="quota-box" style="display:none;"></div>
-
-      <div class="actions">
-        <button class="btn-refresh" onclick="reloadAll()">重新整理</button>
-      </div>
-    </div>
-
-    <div id="couponList" class="loading">載入中...</div>
-
-    <div class="footer-note">
-      請於有效期限內使用，逾期將自動失效
-    </div>
+    <div class="title">我的優惠券</div>
+    <div id="couponList" class="empty">載入中...</div>
   </div>
 
-  <div id="linkModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; padding:20px;">
-    <div style="max-width:560px; margin:10vh auto 0; background:#fff; border-radius:20px; padding:18px;">
-      <div style="font-size:20px; font-weight:900; color:#c9341a; margin-bottom:10px;">一次性轉贈連結</div>
-      <div style="font-size:13px; color:#6f6259; line-height:1.8; margin-bottom:12px;">
-        此連結在朋友尚未領取前可重複查看與複製；一旦領取成功即失效。
-      </div>
-      <textarea id="linkModalText" readonly style="width:100%; min-height:120px; border:1px solid #ddd; border-radius:12px; padding:12px; font-size:13px;"></textarea>
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <button onclick="copyModalLink()" style="flex:1; border:none; border-radius:12px; padding:12px; font-weight:900; background:#06c755; color:#fff;">複製連結</button>
-        <button onclick="closeLinkModal()" style="flex:1; border:1px solid #ddd; border-radius:12px; padding:12px; font-weight:900; background:#fff; color:#333;">關閉</button>
-      </div>
-    </div>
-  </div>
+  <script>
+    const LIFF_ID = "2009551865-e6Y0VCE6";
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwqNjpZqi4i_YI-XlwoOIhiP6oLs2mpaqxwruaHJP-vNvY9UN6kVItjpGpsBCh3u0IK/exec";
 
-<script>
-const liffId = "2009551865-e6Y0VCE6";
-const gasUrl = "https://script.google.com/macros/s/AKfycbwqg9sXbHXW4bI5zfGU2VBfs5w1cPqt0RalPjCDqG0sYGOvzYu-ITol2ZIvPKWCifjR/exec";
-const transferClaimBaseUrl = "https://liff.line.me/2009551865-EGhyWa2w";
-const quotaCouponCode = "EMP200";
+    async function init() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
 
-let transferQuotaInfo = {
-  found: false,
-  enabled: "否",
-  remainQuota: 0,
-  usedQuota: 0,
-  pendingCount: 0,
-  totalQuota: 0
-};
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
 
-async function init() {
-  try {
-    await liff.init({ liffId });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-    await reloadAll();
-  } catch (err) {
-    document.getElementById("couponList").innerHTML =
-      '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
-  }
-}
-
-async function reloadAll() {
-  await loadQuota();
-  await loadCoupons();
-}
-
-async function postToGas(payload) {
-  const res = await fetch(gasUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(payload).toString()
-  });
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error("伺服器回應格式錯誤：" + text);
-  }
-}
-
-async function loadQuota() {
-  try {
-    const profile = await liff.getProfile();
-
-    const result = await postToGas({
-      action: "getQuota",
-      userId: profile.userId,
-      couponNameCode: quotaCouponCode
-    });
-
-    const quotaBox = document.getElementById("quotaInfo");
-
-    // 預設隱藏
-    quotaBox.style.display = "none";
-
-    if (!result.success || !result.found || result.enabled !== "是") {
-      transferQuotaInfo = {
-        found: false,
-        enabled: "否",
-        remainQuota: 0,
-        usedQuota: 0,
-        pendingCount: 0,
-        totalQuota: 0
-      };
-      return;
-    }
-
-    transferQuotaInfo = {
-      found: true,
-      enabled: result.enabled,
-      remainQuota: Number(result.remainQuota || 0),
-      usedQuota: Number(result.usedQuota || 0),
-      pendingCount: Number(result.pendingCount || 0),
-      totalQuota: Number(result.totalQuota || 0)
-    };
-
-    // 只有真的還有可轉贈額度時才顯示提示框
-    if (transferQuotaInfo.remainQuota > 0) {
-      quotaBox.style.display = "block";
-      quotaBox.innerText =
-        `${quotaCouponCode} 可轉贈剩餘：${transferQuotaInfo.remainQuota} 張（已成功 ${transferQuotaInfo.usedQuota} / 待領取 ${transferQuotaInfo.pendingCount} / 總額度 ${transferQuotaInfo.totalQuota}）`;
-    }
-  } catch (err) {
-    const quotaBox = document.getElementById("quotaInfo");
-    quotaBox.style.display = "none";
-    console.error(err);
-  }
-}
-
-async function loadCoupons() {
-  try {
-    document.getElementById("couponList").innerHTML = '<div class="loading">載入中...</div>';
-    const profile = await liff.getProfile();
-
-    const result = await postToGas({
-      action: "list",
-      userId: profile.userId
-    });
-
-    if (!result.success || !result.items || result.items.length === 0) {
-      document.getElementById("couponList").innerHTML = '<div class="empty">目前沒有優惠券</div>';
-      return;
-    }
-
-    const items = result.items.map(item => {
-      const claimedAtDate = toDate(item.claimedAt);
-      const activateAtDate = toDate(item.activateAt);
-      const usedAtDate = item.usedAt ? toDate(item.usedAt) : null;
-      const expireAtDate = toDate(item.expireAt);
-      const displayStatus = getDisplayStatus(item.status || "", activateAtDate, expireAtDate);
-
-      return {
-        ...item,
-        claimedAtDate,
-        activateAtDate,
-        usedAtDate,
-        expireAtDate,
-        displayStatus
-      };
-    });
-
-    items.sort((a, b) => {
-      if ((a.eventType || "") !== (b.eventType || "")) {
-        return (a.eventType || "").localeCompare((b.eventType || ""), "zh-Hant");
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
+        await loadCoupons(userId);
+      } catch (err) {
+        console.error(err);
+        document.getElementById("couponList").innerHTML = "載入失敗";
       }
-      if ((a.category || "") !== (b.category || "")) {
-        return (a.category || "").localeCompare((b.category || ""), "zh-Hant");
+    }
+
+    async function loadCoupons(userId) {
+      try {
+        const res = await fetch(
+          `${API_BASE}?action=getUserCoupons&userId=${encodeURIComponent(userId)}`
+        );
+        const json = await res.json();
+
+        if (!json.success) {
+          document.getElementById("couponList").innerHTML =
+            escapeHtml(json.message || "讀取失敗");
+          return;
+        }
+
+        renderCoupons(json.data || []);
+      } catch (err) {
+        console.error(err);
+        document.getElementById("couponList").innerHTML = "讀取失敗";
       }
-      if (a.displayStatus.order !== b.displayStatus.order) {
-        return a.displayStatus.order - b.displayStatus.order;
+    }
+
+    function renderCoupons(list) {
+      const root = document.getElementById("couponList");
+
+      if (!list.length) {
+        root.className = "empty";
+        root.innerHTML = "目前尚未領取任何優惠券";
+        return;
       }
 
-      const aExpire = a.expireAtDate instanceof Date && !isNaN(a.expireAtDate) ? a.expireAtDate.getTime() : Number.MAX_SAFE_INTEGER;
-      const bExpire = b.expireAtDate instanceof Date && !isNaN(b.expireAtDate) ? b.expireAtDate.getTime() : Number.MAX_SAFE_INTEGER;
-      return aExpire - bExpire;
-    });
+      root.className = "";
 
-    const groups = {};
-    items.forEach(item => {
-      const groupKey = `${item.eventType || "未分類活動"}｜${item.category || "未分類"}`;
-      if (!groups[groupKey]) groups[groupKey] = [];
-      groups[groupKey].push(item);
-    });
+      root.innerHTML = list.map(item => {
+        const status = item.displayStatus || item.status || "未使用";
+        const statusClass = getStatusClass(status);
 
-    let html = '';
+        let extraTip = "";
+        if (status === "尚未生效") {
+          extraTip = `<div class="small-tip">此券尚未到可使用日期，請於啟用日後再使用。</div>`;
+        } else if (status === "已過期") {
+          extraTip = `<div class="small-tip">此券已超過可使用期限。</div>`;
+        }
 
-    Object.keys(groups).forEach(groupKey => {
-      const [eventType, category] = groupKey.split('｜');
-      html += `<div class="section-title">${escapeHtml(eventType)}｜${escapeHtml(category)}</div>`;
-
-      groups[groupKey].forEach(item => {
-        const canUse = item.displayStatus.text === "可使用";
-        const canTransfer =
-          canUse &&
-          item.status !== "已使用" &&
-          item.couponNameCode === quotaCouponCode &&
-          transferQuotaInfo.found &&
-          transferQuotaInfo.enabled === "是" &&
-          transferQuotaInfo.remainQuota > 0;
-
-        html += `
+        return `
           <div class="coupon-card">
-            <div class="coupon-top">
-              <div class="coupon-name">${escapeHtml(item.couponName)}</div>
-              <span class="badge ${item.displayStatus.className}">
-                ${item.displayStatus.text}
-              </span>
+            <div class="coupon-name">${escapeHtml(item.couponName || item["品項"] || "")}</div>
+
+            <div class="coupon-meta">
+              分類：${escapeHtml(item.category || item["分類"] || "")}<br>
+              啟用日：${escapeHtml(item.activateAt || "")}<br>
+              到期日：${escapeHtml(item.expireAt || "")}
             </div>
 
-            <div class="meta-box">
-              <div class="meta">
-                <div><strong>活動類別：</strong>${escapeHtml(item.eventType)}</div>
-                <div><strong>名稱：</strong>${escapeHtml(item.couponName)}</div>
-                <div><strong>分類：</strong>${escapeHtml(item.category)}</div>
-                <div><strong>領取日：</strong>${formatDate(item.claimedAtDate)}</div>
-                <div><strong>啟用日：</strong>${formatDate(item.activateAtDate)}</div>
-                <div><strong>使用日：</strong>${item.usedAtDate ? formatDate(item.usedAtDate) : "尚未使用"}</div>
-                <div><strong>到期日：</strong>${formatDate(item.expireAtDate)}</div>
-                <div><strong>品項代碼：</strong>${escapeHtml(item.couponNameCode)}</div>
-                <div><strong>券號：</strong>${escapeHtml(item.couponId)}</div>
+            <div class="badge-row">
+              <span class="badge badge-type">${escapeHtml(item.eventType || item["活動類別"] || "優惠券")}</span>
+              <span class="badge ${statusClass}">${escapeHtml(status)}</span>
+            </div>
+
+            ${item.note ? `
+              <div class="note-box">
+                <div class="note-title">使用備註</div>
+                <div class="note-content">${escapeHtml(item.note)}</div>
               </div>
-            </div>
+            ` : ""}
 
-            <div class="card-actions">
-              <button
-                class="btn-use"
-                onclick="useCoupon('${escapeJs(item.couponId)}')"
-                ${canUse ? "" : "disabled"}
-              >
-                店員確認使用
-              </button>
-
-              ${canTransfer ? `
-              <button
-                class="btn-use"
-                onclick="showTransferLink('${escapeJs(item.couponId)}')"
-              >
-                查看轉贈連結
-              </button>
-              ` : ''}
-            </div>
-
-            <div class="small">
-              顧客出示本畫面後，由店員按下「店員確認使用」即可回傳為已使用。
-              ${canTransfer ? '<br />此券可查看一次性轉贈連結。' : ''}
-            </div>
+            ${extraTip}
           </div>
         `;
-      });
-    });
-
-    document.getElementById("couponList").innerHTML = html;
-  } catch (err) {
-    document.getElementById("couponList").innerHTML =
-      '<div class="error">載入失敗：' + escapeHtml(err.message) + '</div>';
-    console.error(err);
-  }
-}
-
-async function useCoupon(couponId) {
-  try {
-    const ok = confirm("請確認店員已核對並同意使用，是否回傳為已使用？");
-    if (!ok) return;
-
-    const result = await postToGas({
-      action: "use",
-      couponId
-    });
-
-    alert(result.message || (result.success ? "已更新為已使用" : "更新失敗"));
-    await reloadAll();
-  } catch (err) {
-    alert("操作失敗：" + err.message);
-    console.error(err);
-  }
-}
-
-async function showTransferLink(couponId) {
-  try {
-    const profile = await liff.getProfile();
-
-    const result = await postToGas({
-      action: "createTransfer",
-      couponId: couponId,
-      userId: profile.userId,
-      name: profile.displayName
-    });
-
-    if (!result.success) {
-      alert(result.message || "取得轉贈連結失敗");
-      return;
+      }).join("");
     }
 
-    const transferUrl =
-      transferClaimBaseUrl + "?transferToken=" + encodeURIComponent(result.transferToken);
+    function getStatusClass(status) {
+      if (status === "尚未生效") return "badge-status-pending";
+      if (status === "已使用") return "badge-status-used";
+      if (status === "已過期") return "badge-status-expired";
+      return "badge-status-default";
+    }
 
-    document.getElementById("linkModalText").value = transferUrl;
-    document.getElementById("linkModal").style.display = "block";
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
-    await reloadAll();
-  } catch (err) {
-    alert("操作失敗：" + err.message);
-    console.error(err);
-  }
-}
-
-async function copyModalLink() {
-  try {
-    const text = document.getElementById("linkModalText").value;
-    await navigator.clipboard.writeText(text);
-    alert("已複製連結");
-  } catch (err) {
-    alert("複製失敗：" + err.message);
-  }
-}
-
-function closeLinkModal() {
-  document.getElementById("linkModal").style.display = "none";
-}
-
-function getDisplayStatus(status, activateAtDate, expireAtDate) {
-  const now = new Date();
-
-  if (status === "已使用") return { text: "已使用", className: "badge-used", order: 4 };
-  if (!(activateAtDate instanceof Date) || isNaN(activateAtDate.getTime())) return { text: "資料異常", className: "badge-expired", order: 5 };
-  if (!(expireAtDate instanceof Date) || isNaN(expireAtDate.getTime())) return { text: "資料異常", className: "badge-expired", order: 5 };
-  if (now < activateAtDate) return { text: "未啟用", className: "badge-pending", order: 2 };
-  if (now > expireAtDate) return { text: "已過期", className: "badge-expired", order: 3 };
-  return { text: "可使用", className: "badge-available", order: 1 };
-}
-
-function toDate(value) {
-  if (!value) return null;
-  if (value instanceof Date) return value;
-
-  const str = String(value).trim();
-
-  if (/^\d{4}\/\d{2}\/\d{2}$/.test(str)) {
-    const [y, m, d] = str.split("/").map(Number);
-    return new Date(y, m - 1, d, 0, 0, 0, 0);
-  }
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-    const [y, m, d] = str.split("-").map(Number);
-    return new Date(y, m - 1, d, 0, 0, 0, 0);
-  }
-
-  const d = new Date(str);
-  if (isNaN(d.getTime())) return null;
-  return d;
-}
-
-function formatDate(d) {
-  if (!(d instanceof Date) || isNaN(d.getTime())) return "";
-  return d.toLocaleString("zh-TW");
-}
-
-function escapeHtml(str) {
-  return String(str || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function escapeJs(str) {
-  return String(str || "").replaceAll("'", "\\'");
-}
-
-init();
-</script>
+    init();
+  </script>
 </body>
 </html>
