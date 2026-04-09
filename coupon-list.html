@@ -108,6 +108,24 @@
       color: #777;
       line-height: 1.6;
     }
+    .use-btn,
+    .used-btn {
+      margin-top: 14px;
+      width: 100%;
+      min-height: 46px;
+      border-radius: 14px;
+      border: none;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .use-btn {
+      background: #111;
+      color: #fff;
+    }
+    .used-btn {
+      background: #d9d9d9;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -118,7 +136,8 @@
 
   <script>
     const LIFF_ID = "2009551865-e6Y0VCE6";
-    const API_BASE = "https://script.google.com/macros/s/AKfycbwqNjpZqi4i_YI-XlwoOIhiP6oLs2mpaqxwruaHJP-vNvY9UN6kVItjpGpsBCh3u0IK/exec";
+    const API_BASE = "https://script.google.com/macros/s/AKfycbzGDuBy0OuzxnWLap5A6NB7xxT3lGC00MbJBGYthPxNEU5rwZ4te9zc4E8Z78TylV3A/exec";
+    let currentUserId = "";
 
     async function init() {
       try {
@@ -130,8 +149,8 @@
         }
 
         const profile = await liff.getProfile();
-        const userId = profile.userId;
-        await loadCoupons(userId);
+        currentUserId = profile.userId;
+        await loadCoupons(currentUserId);
       } catch (err) {
         console.error(err);
         document.getElementById("couponList").innerHTML = "載入失敗";
@@ -158,6 +177,37 @@
       }
     }
 
+    async function markCouponUsed(couponId) {
+      const ok = window.confirm("確認將此優惠券標記為已使用？");
+      if (!ok) return;
+
+      try {
+        const res = await fetch(API_BASE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: "markCouponUsed",
+            userId: currentUserId,
+            couponId: couponId
+          })
+        });
+
+        const json = await res.json();
+
+        if (!json.success) {
+          alert(json.message || "更新失敗");
+          return;
+        }
+
+        await loadCoupons(currentUserId);
+      } catch (err) {
+        console.error(err);
+        alert("更新失敗");
+      }
+    }
+
     function renderCoupons(list) {
       const root = document.getElementById("couponList");
 
@@ -180,6 +230,8 @@
           extraTip = `<div class="small-tip">此券已超過可使用期限。</div>`;
         }
 
+        const canUse = status === "未使用";
+
         return `
           <div class="coupon-card">
             <div class="coupon-name">${escapeHtml(item.couponName || item["品項"] || "")}</div>
@@ -187,7 +239,8 @@
             <div class="coupon-meta">
               分類：${escapeHtml(item.category || item["分類"] || "")}<br>
               啟用日：${escapeHtml(item.activateAt || "")}<br>
-              到期日：${escapeHtml(item.expireAt || "")}
+              到期日：${escapeHtml(item.expireAt || "")}<br>
+              券號：${escapeHtml(item.couponId || "")}
             </div>
 
             <div class="badge-row">
@@ -203,6 +256,12 @@
             ` : ""}
 
             ${extraTip}
+
+            ${
+              canUse
+                ? `<button class="use-btn" onclick="markCouponUsed('${escapeHtml(item.couponId || "")}')">確認使用</button>`
+                : `<button class="used-btn" disabled>已使用</button>`
+            }
           </div>
         `;
       }).join("");
