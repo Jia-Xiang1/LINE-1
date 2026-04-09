@@ -6,131 +6,190 @@
   <title>我的優惠券</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      background: #f5f6f8;
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
-      color: #111;
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang TC", sans-serif;
+      background: radial-gradient(circle at top, #fff7ef 0%, #f8f1e7 35%, #f3eee8 100%);
+      color: #2d1500;
+      min-height: 100vh;
+      padding: 20px 14px 28px;
     }
+
     .wrap {
-      max-width: 720px;
+      max-width: 680px;
       margin: 0 auto;
-      padding: 20px 14px 40px;
-      box-sizing: border-box;
     }
-    .title {
+
+    .top-deco {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(201, 52, 26, 0.18);
+    }
+
+    .page-title {
       font-size: 28px;
-      font-weight: 800;
+      font-weight: 900;
+      color: #111;
       margin: 0 0 18px;
+      line-height: 1.2;
     }
+
     .empty {
-      background: #fff;
-      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
       padding: 28px 16px;
       text-align: center;
       color: #666;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(201, 52, 26, 0.08);
     }
+
     .coupon-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      padding: 22px 18px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(201, 52, 26, 0.08);
+      overflow: hidden;
+      position: relative;
     }
+
+    .coupon-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #c9341a 0%, #d7a423 50%, #c9341a 100%);
+    }
+
     .coupon-name {
-      font-size: 21px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      line-height: 1.4;
+      font-size: 24px;
+      font-weight: 900;
+      color: #111;
+      line-height: 1.3;
+      margin-bottom: 14px;
     }
+
     .coupon-meta {
       font-size: 14px;
-      color: #444;
-      line-height: 1.8;
+      color: #4d433c;
+      line-height: 2;
     }
+
+    .coupon-meta strong {
+      color: #8b1a0a;
+      font-weight: 800;
+    }
+
     .badge-row {
-      margin-top: 12px;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      margin-top: 14px;
     }
+
     .badge {
-      display: inline-block;
-      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 13px;
       border-radius: 999px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
     }
+
     .badge-type {
       background: #111;
       color: #fff;
     }
-    .badge-status-default {
+
+    .badge-default {
       background: #f0f0f0;
       color: #333;
     }
-    .badge-status-pending {
+
+    .badge-pending {
       background: #fff3cd;
       color: #8a6300;
     }
-    .badge-status-used {
-      background: #e3f2fd;
-      color: #0d47a1;
+
+    .badge-used {
+      background: #dfefff;
+      color: #184f9c;
     }
-    .badge-status-expired {
-      background: #fbe9e7;
-      color: #bf360c;
+
+    .badge-expired {
+      background: #fce4e4;
+      color: #b42318;
     }
+
     .note-box {
       margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #f8f8f8;
-      border: 1px solid #ececec;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(201, 52, 26, 0.08);
+      padding: 14px;
     }
+
     .note-title {
       font-size: 13px;
       font-weight: 800;
-      margin-bottom: 6px;
-      color: #333;
+      color: #8b1a0a;
+      margin-bottom: 8px;
     }
+
     .note-content {
       font-size: 14px;
-      color: #555;
-      line-height: 1.7;
+      color: #665a53;
+      line-height: 1.8;
       white-space: pre-wrap;
       word-break: break-word;
     }
+
     .small-tip {
-      margin-top: 10px;
+      margin-top: 12px;
       font-size: 13px;
       color: #777;
-      line-height: 1.6;
+      line-height: 1.7;
     }
+
     .use-btn,
     .used-btn {
-      margin-top: 14px;
+      margin-top: 16px;
       width: 100%;
-      min-height: 46px;
-      border-radius: 14px;
+      min-height: 48px;
       border: none;
-      font-size: 15px;
-      font-weight: 800;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 900;
     }
+
     .use-btn {
-      background: #111;
+      background: linear-gradient(135deg, #111 0%, #333 100%);
       color: #fff;
     }
+
     .used-btn {
-      background: #d9d9d9;
+      background: #d7d7d7;
       color: #666;
+    }
+
+    @media (max-width: 480px) {
+      .page-title { font-size: 24px; }
+      .coupon-name { font-size: 21px; }
+      .coupon-card { padding: 20px 14px 16px; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="title">我的優惠券</div>
+    <div class="top-deco"></div>
+    <div class="page-title">我的優惠券</div>
     <div id="couponList" class="empty">載入中...</div>
   </div>
 
@@ -153,6 +212,7 @@
         await loadCoupons(currentUserId);
       } catch (err) {
         console.error(err);
+        document.getElementById("couponList").className = "empty";
         document.getElementById("couponList").innerHTML = "載入失敗";
       }
     }
@@ -165,6 +225,7 @@
         const json = await res.json();
 
         if (!json.success) {
+          document.getElementById("couponList").className = "empty";
           document.getElementById("couponList").innerHTML =
             escapeHtml(json.message || "讀取失敗");
           return;
@@ -173,6 +234,7 @@
         renderCoupons(json.data || []);
       } catch (err) {
         console.error(err);
+        document.getElementById("couponList").className = "empty";
         document.getElementById("couponList").innerHTML = "讀取失敗";
       }
     }
@@ -237,10 +299,10 @@
             <div class="coupon-name">${escapeHtml(item.couponName || item["品項"] || "")}</div>
 
             <div class="coupon-meta">
-              分類：${escapeHtml(item.category || item["分類"] || "")}<br>
-              啟用日：${escapeHtml(item.activateAt || "")}<br>
-              到期日：${escapeHtml(item.expireAt || "")}<br>
-              券號：${escapeHtml(item.couponId || "")}
+              <div><strong>分類：</strong>${escapeHtml(item.category || item["分類"] || "")}</div>
+              <div><strong>啟用日：</strong>${escapeHtml(item.activateAt || "")}</div>
+              <div><strong>到期日：</strong>${escapeHtml(item.expireAt || "")}</div>
+              <div><strong>券號：</strong>${escapeHtml(item.couponId || "")}</div>
             </div>
 
             <div class="badge-row">
@@ -268,10 +330,10 @@
     }
 
     function getStatusClass(status) {
-      if (status === "尚未生效") return "badge-status-pending";
-      if (status === "已使用") return "badge-status-used";
-      if (status === "已過期") return "badge-status-expired";
-      return "badge-status-default";
+      if (status === "尚未生效") return "badge-pending";
+      if (status === "已使用") return "badge-used";
+      if (status === "已過期") return "badge-expired";
+      return "badge-default";
     }
 
     function escapeHtml(str) {
