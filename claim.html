@@ -291,7 +291,7 @@
         </ol>
       </div>
 
-      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()">
+      <button id="claimBtn" class="btn-primary" onclick="claimCoupon()" disabled>
         確認領券
       </button>
 
@@ -320,6 +320,13 @@ let redirectTimer = null;
 function getParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name) || "";
+}
+
+function normalizeCode(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .toUpperCase();
 }
 
 function escapeHtml(str) {
@@ -383,26 +390,26 @@ async function init() {
       throw new Error("缺少 couponNameCode");
     }
 
-  const prizeConfigs = await fetchPrizeConfigs();
-  const safeCode = normalizeCode(couponNameCode);
+    const prizeConfigs = await fetchPrizeConfigs();
+    const safeCode = normalizeCode(couponNameCode);
 
-  const prize = prizeConfigs.find(item => {
-    const candidateCodes = [
-      item.couponNameCode,
-      item["couponNameCode"],
-      item["CouponNameCode"],
-      item.code,
-      item["code"],
-      item["Code"],
-      item.coupon_code,
-      item["coupon_code"],
-      item["券號"],
-      item["券別代碼"],
-      item["優惠券代碼"]
-    ];
+    const prize = prizeConfigs.find(item => {
+      const candidateCodes = [
+        item.couponNameCode,
+        item["couponNameCode"],
+        item["CouponNameCode"],
+        item.code,
+        item["code"],
+        item["Code"],
+        item.coupon_code,
+        item["coupon_code"],
+        item["券號"],
+        item["券別代碼"],
+        item["優惠券代碼"]
+      ];
 
-    return candidateCodes.some(code => normalizeCode(code) === safeCode);
-  });
+      return candidateCodes.some(code => normalizeCode(code) === safeCode);
+    });
 
     const eventEl = document.getElementById("eventName");
     const prizeEl = document.getElementById("prizeName");
@@ -414,13 +421,18 @@ async function init() {
     if (sourceEl) sourceEl.innerText = source;
     if (prizeEl) {
       prizeEl.innerText =
-         prize?.["品項名稱"] ||
-         prize?.["name"] ||
-         prize?.["商品名稱"] ||
-         prize?.["獎項名稱"] ||
-         prize?.name ||
-         "查無對應獎項名稱";
+        prize?.["品項名稱"] ||
+        prize?.["name"] ||
+        prize?.["商品名稱"] ||
+        prize?.["獎項名稱"] ||
+        prize?.name ||
+        "查無對應獎項名稱";
     }
+
+    console.log("couponNameCode =", couponNameCode);
+    console.log("safeCode =", safeCode);
+    console.log("prizeConfigs =", prizeConfigs);
+    console.log("matchedPrize =", prize);
 
     const claimBtn = document.getElementById("claimBtn");
     if (claimBtn) {
