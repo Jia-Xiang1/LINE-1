@@ -11,8 +11,7 @@
     body {
       margin: 0;
       font-family: "Noto Sans TC", sans-serif;
-      background:
-        radial-gradient(circle at top, #fff8f0 0%, #f8f1e7 30%, #f3ede5 100%);
+      background: radial-gradient(circle at top, #fff8f0 0%, #f8f1e7 30%, #f3ede5 100%);
       color: #2d1500;
       min-height: 100vh;
       padding: 18px 14px 28px;
@@ -35,9 +34,7 @@
       background: rgba(255, 255, 255, 0.94);
       border-radius: 26px;
       padding: 22px 18px 18px;
-      box-shadow:
-        0 10px 30px rgba(86, 45, 10, 0.08),
-        0 2px 10px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 30px rgba(86, 45, 10, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(201, 52, 26, 0.08);
       overflow: hidden;
       position: relative;
@@ -247,6 +244,7 @@
       font-size: 14px;
       color: #b42318;
       box-shadow: 0 4px 10px rgba(180, 35, 24, 0.04);
+      word-break: break-word;
     }
 
     .footer-note {
@@ -287,7 +285,7 @@
 
         <div class="meta">
           <div><strong>品項代碼：</strong><span id="couponNameCodeText">載入中...</span></div>
-          <div><strong>領券方式：</strong><span id="sourceText">活動頁面</span></div>
+          <div><strong>領券方式：</strong><span id="sourceText">載入中...</span></div>
         </div>
       </div>
 
@@ -386,7 +384,7 @@ async function init() {
 
     const couponNameCode = getParam("couponNameCode") || "";
     const eventType = getParam("eventType") || "特別活動";
-    const source = getParam("from") || "活動頁面";
+    const source = getParam("from") || eventType || "活動頁面";
 
     if (!couponNameCode) {
       throw new Error("缺少 couponNameCode");
@@ -400,18 +398,33 @@ async function init() {
         .trim()
         .toUpperCase();
       return rowCode === safeCode;
-     });
+    });
 
-    document.getElementById("eventName").innerText = eventType;
-    document.getElementById("couponNameCodeText").innerText = couponNameCode;
-    document.getElementById("sourceText").innerText = source;
-    document.getElementById("prizeName").innerText =
-      prize?.["品項名稱"] ||
-      prize?.name ||
-      "查無對應獎項名稱";
+    const eventEl = document.getElementById("eventName");
+    const prizeEl = document.getElementById("prizeName");
+    const codeEl = document.getElementById("couponNameCodeText");
+    const sourceEl = document.getElementById("sourceText");
+
+    if (eventEl) eventEl.innerText = eventType;
+    if (codeEl) codeEl.innerText = couponNameCode;
+    if (sourceEl) sourceEl.innerText = source;
+    if (prizeEl) {
+      prizeEl.innerText =
+        prize?.["品項名稱"] ||
+        prize?.name ||
+        "查無對應獎項名稱";
+    }
+
+    const claimBtn = document.getElementById("claimBtn");
+    if (claimBtn) {
+      claimBtn.disabled = false;
+    }
   } catch (err) {
     renderError(err.message || "頁面初始化失敗");
-    document.getElementById("claimBtn").disabled = true;
+    const claimBtn = document.getElementById("claimBtn");
+    if (claimBtn) {
+      claimBtn.disabled = true;
+    }
     console.error(err);
   }
 }
@@ -427,13 +440,17 @@ async function getProfile() {
 async function claimCoupon() {
   try {
     const btn = document.getElementById("claimBtn");
-    btn.disabled = true;
-    btn.innerText = "領券處理中...";
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "領券處理中...";
+    }
 
     const profile = await getProfile();
     if (!profile) {
-      btn.disabled = false;
-      btn.innerText = "確認領券";
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "確認領券";
+      }
       return;
     }
 
@@ -455,20 +472,26 @@ async function claimCoupon() {
 
     if (!result.success) {
       renderError(result.message || "領券失敗");
-      btn.disabled = false;
-      btn.innerText = "確認領券";
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "確認領券";
+      }
       return;
     }
 
     renderSuccess(result.item || result.data || {}, eventType);
-    btn.disabled = true;
-    btn.innerText = "已完成領券";
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "已完成領券";
+    }
   } catch (err) {
     renderError("領券失敗：" + err.message);
     console.error(err);
     const btn = document.getElementById("claimBtn");
-    btn.disabled = false;
-    btn.innerText = "確認領券";
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = "確認領券";
+    }
   }
 }
 
@@ -499,7 +522,10 @@ function renderSuccess(item, eventType) {
     </div>
   `;
 
-  document.getElementById("messageArea").innerHTML = html;
+  const msg = document.getElementById("messageArea");
+  if (msg) {
+    msg.innerHTML = html;
+  }
 
   if (redirectTimer) clearTimeout(redirectTimer);
   redirectTimer = setTimeout(() => {
@@ -508,9 +534,12 @@ function renderSuccess(item, eventType) {
 }
 
 function renderError(message) {
-  document.getElementById("messageArea").innerHTML = `
-    <div class="error">${escapeHtml(message)}</div>
-  `;
+  const msg = document.getElementById("messageArea");
+  if (msg) {
+    msg.innerHTML = `
+      <div class="error">${escapeHtml(message)}</div>
+    `;
+  }
 }
 
 function goToCouponList() {
