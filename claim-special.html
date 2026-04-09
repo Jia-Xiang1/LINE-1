@@ -393,15 +393,22 @@ async function init() {
     }
 
     const prizeConfigs = await fetchPrizeConfigs();
-    const prize = prizeConfigs.find(
-      item => String(item.couponNameCode || "").trim() === String(couponNameCode).trim()
-    );
+    const safeCode = String(couponNameCode || "").trim().toUpperCase();
+
+    const prize = prizeConfigs.find(item => {
+      const rowCode = String(item.couponNameCode || item["couponNameCode"] || "")
+        .trim()
+        .toUpperCase();
+      return rowCode === safeCode;
+     });
 
     document.getElementById("eventName").innerText = eventType;
     document.getElementById("couponNameCodeText").innerText = couponNameCode;
     document.getElementById("sourceText").innerText = source;
     document.getElementById("prizeName").innerText =
-      prize?.["品項名稱"] || "將依後台設定建立優惠券";
+      prize?.["品項名稱"] ||
+      prize?.name ||
+      "查無對應獎項名稱";
   } catch (err) {
     renderError(err.message || "頁面初始化失敗");
     document.getElementById("claimBtn").disabled = true;
