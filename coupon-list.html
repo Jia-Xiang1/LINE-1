@@ -7,86 +7,112 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "PingFang TC","Noto Sans TC",Arial,sans-serif;
       background:
-        radial-gradient(circle at top, #311508 0%, #17100c 40%, #0b0b0b 100%);
-      color: #fff4e5;
-      min-height: 100vh;
+        radial-gradient(circle at top, #3b1f0f 0%, #1a0f08 35%, #0e0a08 70%, #080808 100%);
+      color: #fff7ed;
     }
+
     .wrap {
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
       padding: 20px 16px 40px;
     }
-    .head {
+
+    .hero {
       text-align: center;
       margin-bottom: 18px;
     }
+
     .title {
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 900;
       color: #ffd39d;
       margin-bottom: 6px;
+      text-shadow: 0 0 20px rgba(255,179,71,0.28);
     }
+
     .sub {
       color: #fcd9b6;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
-    .user-box, .group-card, .empty-card {
+
+    .user-box,
+    .group-card,
+    .empty-card {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,214,153,0.18);
-      border-radius: 22px;
+      border-radius: 24px;
       box-shadow: 0 0 24px rgba(255,166,77,0.10);
+      backdrop-filter: blur(8px);
       padding: 16px;
       margin-bottom: 16px;
     }
+
     .user-box {
-      line-height: 1.8;
+      line-height: 1.9;
       font-size: 14px;
       word-break: break-word;
+      color: #ffe8c9;
     }
+
     .group-title {
       font-size: 22px;
       font-weight: 900;
       color: #ffd39d;
       margin-bottom: 12px;
     }
+
     .coupon-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
+
     .coupon-card {
       background: rgba(255,255,255,0.08);
-      border-radius: 18px;
+      border: 1px solid rgba(255,214,153,0.10);
+      border-radius: 20px;
       padding: 14px;
     }
+
     .coupon-head {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 10px;
+      align-items: flex-start;
     }
+
     .event-name {
       font-size: 13px;
       color: #ffc98e;
       font-weight: 700;
+      margin-bottom: 4px;
     }
+
     .coupon-name {
       font-size: 20px;
       font-weight: 900;
-      line-height: 1.4;
+      line-height: 1.45;
+      color: #fff5e7;
+      word-break: break-word;
     }
+
     .pill {
       flex-shrink: 0;
       border-radius: 999px;
       padding: 7px 12px;
       font-size: 12px;
       font-weight: 900;
+      white-space: nowrap;
     }
+
     .ready { background: #166534; color: #dcfce7; }
     .pending { background: #92400e; color: #fef3c7; }
     .used { background: #374151; color: #e5e7eb; }
@@ -99,6 +125,8 @@
       line-height: 1.9;
       font-size: 14px;
       margin-top: 10px;
+      color: #ffe8c9;
+      word-break: break-word;
     }
 
     .actions {
@@ -107,6 +135,7 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .btn {
       border: 0;
       border-radius: 14px;
@@ -115,24 +144,41 @@
       font-weight: 900;
       cursor: pointer;
     }
+
     .btn-main {
       background: linear-gradient(180deg, #ffba52, #ff8c1a);
       color: #2a1300;
+      box-shadow: 0 10px 20px rgba(255,140,26,0.18);
     }
+
     .btn-disabled {
       background: rgba(255,255,255,0.12);
       color: rgba(255,255,255,0.7);
       cursor: not-allowed;
+      border: 1px solid rgba(255,214,153,0.10);
     }
+
     .empty-card {
       text-align: center;
       color: #fcd9b6;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .title {
+        font-size: 28px;
+      }
+
+      .coupon-name {
+        font-size: 18px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="head">
+    <div class="hero">
       <div class="title">我的優惠券</div>
       <div class="sub">依券別分類分組，類別內依到期日排序</div>
     </div>
@@ -148,7 +194,7 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzoMJy0JJGJ46tXEn9U4cjggpIZ6UugAy6tiZs67NwaWibb0i0wuh73O6aer_TCCTKo/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFQEygXy8QlMDwQPpwY0ZJyTHHViOsDA9iEk80nZUDEqO9JcElRbDc3R6cFeT9n8iT/exec';
     const LIFF_ID = '2009551865-e6Y0VCE6';
 
     let profileData = { userId: '', displayName: '' };
@@ -249,17 +295,20 @@
 
     async function loadCoupons() {
       if (!profileData.userId) {
-        document.getElementById('couponContainer').innerHTML = `<div class="empty-card">尚未取得使用者資訊</div>`;
+        document.getElementById('couponContainer').innerHTML =
+          `<div class="empty-card">尚未取得使用者資訊</div>`;
         return;
       }
 
       try {
         const res = await apiGet('getMyCoupons', { userId: profileData.userId });
+
         if (!res || !res.success) {
           document.getElementById('couponContainer').innerHTML =
             `<div class="empty-card">${escapeHtml((res && res.message) || '讀取失敗')}</div>`;
           return;
         }
+
         renderCoupons(res.groupedData || []);
       } catch (err) {
         document.getElementById('couponContainer').innerHTML =
@@ -269,7 +318,11 @@
 
     async function redeemCoupon(couponId) {
       if (!couponId) return;
-      if (!profileData.userId) return alert('尚未取得使用者資料');
+      if (!profileData.userId) {
+        alert('尚未取得使用者資料');
+        return;
+      }
+
       if (!confirm('請確認已由店員核對，是否核銷此優惠券？')) return;
 
       try {
