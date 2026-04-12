@@ -7,20 +7,17 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
       background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
       color: #111827;
     }
-
     .wrap {
       max-width: 760px;
       margin: 0 auto;
       padding: 22px 16px 40px;
     }
-
     .header-card,
     .empty-card,
     .group-card {
@@ -30,14 +27,12 @@
       padding: 18px;
       margin-bottom: 16px;
     }
-
     .title {
       font-size: 28px;
       font-weight: 800;
       text-align: center;
       margin-bottom: 6px;
     }
-
     .sub {
       text-align: center;
       color: #6b7280;
@@ -45,7 +40,6 @@
       margin-bottom: 12px;
       line-height: 1.6;
     }
-
     .user-line {
       text-align: center;
       font-size: 14px;
@@ -53,27 +47,23 @@
       line-height: 1.8;
       word-break: break-word;
     }
-
     .group-title {
       font-size: 20px;
       font-weight: 800;
       margin-bottom: 14px;
       color: #111827;
     }
-
     .coupon-list {
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
-
     .coupon-card {
       background: #fff;
       border-radius: 20px;
       padding: 16px;
       border: 1px solid #e5e7eb;
     }
-
     .coupon-head {
       display: flex;
       justify-content: space-between;
@@ -81,13 +71,11 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-
     .event-name {
       font-size: 14px;
       color: #6b7280;
       font-weight: 700;
     }
-
     .item-name {
       font-size: 20px;
       font-weight: 800;
@@ -95,7 +83,6 @@
       margin-top: 4px;
       word-break: break-word;
     }
-
     .status-badge {
       flex-shrink: 0;
       padding: 7px 12px;
@@ -103,27 +90,22 @@
       font-size: 12px;
       font-weight: 800;
     }
-
     .status-ready {
       background: #dcfce7;
       color: #166534;
     }
-
     .status-pending {
       background: #fef3c7;
       color: #92400e;
     }
-
     .status-used {
       background: #e5e7eb;
       color: #374151;
     }
-
     .status-expired {
       background: #fee2e2;
       color: #991b1b;
     }
-
     .coupon-info {
       background: #f9fafb;
       border-radius: 16px;
@@ -132,14 +114,12 @@
       line-height: 1.9;
       color: #374151;
     }
-
     .coupon-actions {
       display: flex;
       gap: 10px;
       margin-top: 14px;
       flex-wrap: wrap;
     }
-
     .btn {
       border: 0;
       border-radius: 14px;
@@ -148,18 +128,15 @@
       font-weight: 800;
       cursor: pointer;
     }
-
     .btn-redeem {
       background: #111827;
       color: white;
     }
-
     .btn-disabled {
       background: #e5e7eb;
       color: #6b7280;
       cursor: not-allowed;
     }
-
     .empty-card {
       text-align: center;
       color: #6b7280;
@@ -185,8 +162,30 @@
   </div>
 
   <script>
-    const LIFF_ID = '2009551865-e6Y0VCE6';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwp1KP5xrCUXw9TvwBOEEwu1aE-yjdsxKU2gfQXX1k8hR7vlPCR0-W6bGSgWJpmjUA1/exec';
+    const LIFF_ID = '你的LIFF_ID';
+
     let profileData = { userId: '', displayName: '' };
+
+    async function apiGet(action, params = {}) {
+      const url = new URL(GAS_API_URL);
+      url.searchParams.set('action', action);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) url.searchParams.set(k, v);
+      });
+
+      const res = await fetch(url.toString());
+      return await res.json();
+    }
+
+    async function apiPost(payload) {
+      const res = await fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
 
     async function initLiff() {
       await liff.init({ liffId: LIFF_ID });
@@ -262,31 +261,30 @@
       `).join('');
     }
 
-    function loadMyCoupons() {
+    async function loadMyCoupons() {
       if (!profileData.userId) {
         document.getElementById('couponContainer').innerHTML =
           '<div class="empty-card">尚未取得使用者資料</div>';
         return;
       }
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (!res || !res.success) {
-            document.getElementById('couponContainer').innerHTML =
-              `<div class="empty-card">${escapeHtml((res && res.message) || '載入失敗')}</div>`;
-            return;
-          }
+      try {
+        const res = await apiGet('getMyCoupons', { userId: profileData.userId });
 
-          renderGroupedCoupons(res.groupedData || []);
-        })
-        .withFailureHandler(err => {
+        if (!res || !res.success) {
           document.getElementById('couponContainer').innerHTML =
-            `<div class="empty-card">載入失敗：${escapeHtml(err.message)}</div>`;
-        })
-        .getMyCoupons(profileData.userId);
+            `<div class="empty-card">${escapeHtml((res && res.message) || '載入失敗')}</div>`;
+          return;
+        }
+
+        renderGroupedCoupons(res.groupedData || []);
+      } catch (err) {
+        document.getElementById('couponContainer').innerHTML =
+          `<div class="empty-card">載入失敗：${escapeHtml(err.message)}</div>`;
+      }
     }
 
-    function redeemCoupon(recordId) {
+    async function redeemCoupon(recordId) {
       if (!recordId) return;
 
       if (!profileData.userId) {
@@ -296,23 +294,23 @@
 
       if (!confirm('請確認已由店員核對，是否核銷此優惠券？')) return;
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (!res || !res.success) {
-            alert((res && res.message) || '核銷失敗');
-            return;
-          }
-
-          alert('核銷成功');
-          loadMyCoupons();
-        })
-        .withFailureHandler(err => {
-          alert('核銷失敗：' + err.message);
-        })
-        .redeemCoupon({
-          recordId: recordId,
+      try {
+        const res = await apiPost({
+          action: 'redeemCoupon',
+          recordId,
           userId: profileData.userId
         });
+
+        if (!res || !res.success) {
+          alert((res && res.message) || '核銷失敗');
+          return;
+        }
+
+        alert('核銷成功');
+        await loadMyCoupons();
+      } catch (err) {
+        alert('核銷失敗：' + err.message);
+      }
     }
 
     function escapeHtml(str) {
@@ -331,7 +329,7 @@
     async function initPage() {
       try {
         await initLiff();
-        loadMyCoupons();
+        await loadMyCoupons();
       } catch (err) {
         document.getElementById('couponContainer').innerHTML =
           `<div class="empty-card">LIFF 初始化失敗：${escapeHtml(err.message)}</div>`;
