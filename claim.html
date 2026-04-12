@@ -7,92 +7,142 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "PingFang TC","Noto Sans TC",Arial,sans-serif;
       background:
-        radial-gradient(circle at top, #311508 0%, #17100c 40%, #0b0b0b 100%);
-      color: #fff4e5;
-      min-height: 100vh;
+        radial-gradient(circle at top, #3b1f0f 0%, #1a0f08 35%, #0e0a08 70%, #080808 100%);
+      color: #fff7ed;
     }
+
     .wrap {
-      max-width: 560px;
+      max-width: 580px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
+      padding: 22px 16px 40px;
     }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: #ffd39d;
+      text-shadow: 0 0 20px rgba(255,179,71,0.28);
+      letter-spacing: 1px;
+    }
+
+    .sub {
+      color: #fcd9b6;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
     .card {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,214,153,0.18);
+      box-shadow: 0 0 24px rgba(255,166,77,0.10);
+      backdrop-filter: blur(8px);
       border-radius: 26px;
-      box-shadow: 0 0 28px rgba(255,166,77,0.10);
-      padding: 20px;
+      padding: 18px;
     }
-    .title {
-      font-size: 30px;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 6px;
-      color: #ffd39d;
-    }
-    .sub {
-      text-align: center;
-      color: #fcd9b6;
-      font-size: 14px;
-      margin-bottom: 18px;
-    }
+
     .coupon-box {
       background: rgba(255,255,255,0.08);
       border-radius: 20px;
       padding: 16px;
       margin-bottom: 14px;
+      border: 1px solid rgba(255,214,153,0.12);
     }
+
     .label {
       color: #ffc98e;
       font-size: 13px;
       font-weight: 700;
       margin-bottom: 4px;
     }
+
     .value {
       font-size: 19px;
       font-weight: 900;
       line-height: 1.5;
       margin-bottom: 12px;
       word-break: break-word;
+      color: #fff5e7;
     }
-    .msg {
-      text-align: center;
-      margin: 12px 0;
-      font-weight: 800;
-    }
-    .ok { color: #86efac; }
-    .err { color: #fca5a5; }
+
     .user-box {
       background: rgba(255,255,255,0.06);
       border-radius: 18px;
       padding: 14px;
-      line-height: 1.8;
+      line-height: 1.9;
       font-size: 14px;
       margin-bottom: 12px;
       word-break: break-word;
+      color: #ffe8c9;
     }
+
+    .status-box {
+      text-align: center;
+      margin: 12px 0;
+      font-weight: 800;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 28px;
+    }
+
+    .ok { color: #86efac; }
+    .err { color: #fca5a5; }
+
+    .notice-box {
+      background: rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.85;
+      font-size: 14px;
+      margin-top: 12px;
+      color: #ffe8c9;
+    }
+
     .btn {
       width: 100%;
       border: 0;
       border-radius: 18px;
-      padding: 14px 16px;
+      padding: 15px 16px;
       font-size: 16px;
       font-weight: 900;
       cursor: pointer;
       margin-top: 10px;
+      transition: transform .15s ease, opacity .15s ease;
     }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
     .btn-main {
       background: linear-gradient(180deg, #ffba52, #ff8c1a);
       color: #2a1300;
+      box-shadow: 0 10px 20px rgba(255,140,26,0.18);
     }
+
     .btn-sub {
       background: rgba(255,255,255,0.12);
       color: #fff5e7;
+      border: 1px solid rgba(255,214,153,0.18);
     }
+
+    .btn[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .success-box {
       display: none;
       margin-top: 14px;
@@ -100,17 +150,36 @@
       border: 1px solid rgba(16,185,129,0.30);
       border-radius: 18px;
       padding: 14px;
-      line-height: 1.8;
+      line-height: 1.9;
       color: #d1fae5;
+      word-break: break-word;
+    }
+
+    .success-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .title {
+        font-size: 28px;
+      }
+
+      .value {
+        font-size: 18px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
+    <div class="hero">
       <div class="title">領取優惠券</div>
       <div class="sub">請確認券別資訊後進行領取</div>
+    </div>
 
+    <div class="card">
       <div class="coupon-box">
         <div class="label">活動名稱</div>
         <div id="活動名稱" class="value">讀取中...</div>
@@ -124,7 +193,7 @@
         <div class="label">券別名稱</div>
         <div id="couponName" class="value">讀取中...</div>
 
-        <div class="label">有效期間</div>
+        <div class="label">活動期間</div>
         <div id="period" class="value">讀取中...</div>
       </div>
 
@@ -133,17 +202,25 @@
         LINE userId：<span id="userId">讀取中...</span>
       </div>
 
-      <div id="message" class="msg"></div>
+      <div id="message" class="status-box"></div>
 
       <button id="claimBtn" class="btn btn-main" onclick="claimCoupon()">立即領取</button>
       <button class="btn btn-sub" onclick="goCouponList()">前往我的優惠券</button>
 
-      <div id="successBox" class="success-box"></div>
+      <div class="notice-box">
+        領取後將自動建立你的專屬優惠券。<br>
+        啟用日依系統規則顯示於卷包頁，實際可使用狀態以卷包頁為準。
+      </div>
+
+      <div id="successBox" class="success-box">
+        <div class="success-title">領取成功</div>
+        <div id="successDetail"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzoMJy0JJGJ46tXEn9U4cjggpIZ6UugAy6tiZs67NwaWibb0i0wuh73O6aer_TCCTKo/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFQEygXy8QlMDwQPpwY0ZJyTHHViOsDA9iEk80nZUDEqO9JcElRbDc3R6cFeT9n8iT/exec';
     const LIFF_ID = '2009551865-EGhyWa2w';
     const COUPON_LIST_URL = 'https://jia-xiang1.github.io/LINE-1/coupon-list.html';
 
@@ -158,7 +235,7 @@
     function setMessage(text, isError = false) {
       const el = document.getElementById('message');
       el.textContent = text || '';
-      el.className = 'msg ' + (isError ? 'err' : 'ok');
+      el.className = 'status-box ' + (isError ? 'err' : 'ok');
     }
 
     async function apiGet(action, params = {}) {
@@ -192,6 +269,7 @@
         const profile = await liff.getProfile();
         profileData.userId = profile.userId || '';
         profileData.displayName = profile.displayName || '';
+
         document.getElementById('displayName').textContent = profileData.displayName || '-';
         document.getElementById('userId').textContent = profileData.userId || '-';
       } catch (err) {
@@ -204,22 +282,27 @@
       const configId = getQueryParam('configId');
       if (!configId) {
         setMessage('缺少 configId', true);
+        document.getElementById('claimBtn').disabled = true;
         return;
       }
 
       try {
         const res = await apiGet('getClaimConfig', { configId });
+
         if (!res || !res.success || !res.data) {
           setMessage((res && res.message) || '找不到券別', true);
+          document.getElementById('claimBtn').disabled = true;
           return;
         }
 
         currentConfig = res.data;
+
         document.getElementById('活動名稱').textContent = currentConfig.活動名稱 || '-';
         document.getElementById('品項').textContent = currentConfig.品項 || '-';
         document.getElementById('分類').textContent = currentConfig.分類 || '-';
         document.getElementById('couponName').textContent = currentConfig.couponName || '-';
-        document.getElementById('period').textContent = `${currentConfig.開始日 || '-'} ～ ${currentConfig.截止日 || '-'}`;
+        document.getElementById('period').textContent =
+          `${currentConfig.開始日 || '-'} ～ ${currentConfig.截止日 || '-'}`;
 
         if (!res.claimable) {
           setMessage(res.message || '目前不可領取', true);
@@ -229,13 +312,23 @@
         }
       } catch (err) {
         setMessage('讀取失敗：' + err.message, true);
+        document.getElementById('claimBtn').disabled = true;
       }
     }
 
     async function claimCoupon() {
-      if (!currentConfig || !currentConfig.id) return setMessage('缺少券別資料', true);
-      if (!profileData.userId) return setMessage('尚未取得使用者資訊', true);
+      if (!currentConfig || !currentConfig.id) {
+        setMessage('缺少券別資料', true);
+        return;
+      }
 
+      if (!profileData.userId) {
+        setMessage('尚未取得使用者資訊', true);
+        return;
+      }
+
+      const btn = document.getElementById('claimBtn');
+      btn.disabled = true;
       setMessage('領取中...');
 
       try {
@@ -248,21 +341,27 @@
 
         if (!res || !res.success) {
           setMessage((res && res.message) || '領取失敗', true);
+          btn.disabled = false;
           return;
         }
 
         setMessage('領取成功');
-        document.getElementById('successBox').style.display = 'block';
-        document.getElementById('successBox').innerHTML = `
-          領取成功<br>
+
+        const successBox = document.getElementById('successBox');
+        const successDetail = document.getElementById('successDetail');
+
+        successBox.style.display = 'block';
+        successDetail.innerHTML = `
           券名稱：${escapeHtml(res.data.couponName || '')}<br>
-          類別：${escapeHtml(res.data.category || '')}<br>
+          券別分類：${escapeHtml(res.data.category || '')}<br>
+          領取時間：${escapeHtml(res.data.claimAt || '')}<br>
           啟用日：${escapeHtml(res.data.activateAt || '')}<br>
           到期日：${escapeHtml(res.data.expireAt || '')}<br>
           券號：${escapeHtml(res.data.couponId || '')}
         `;
       } catch (err) {
         setMessage('領取失敗：' + err.message, true);
+        btn.disabled = false;
       }
     }
 
