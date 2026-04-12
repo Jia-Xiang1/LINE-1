@@ -360,15 +360,6 @@
         </div>
 
         <div class="field">
-          <label>發放方式</label>
-          <select id="發放方式">
-            <option value="qr">qr</option>
-            <option value="QR/NFC">QR/NFC</option>
-            <option value="NFC">NFC</option>
-          </select>
-        </div>
-
-        <div class="field">
           <label>券別代碼</label>
           <input id="couponNameCode" placeholder="例如：C08" />
         </div>
@@ -461,7 +452,7 @@
         eventType: 活動名稱,
         couponName: 品項,
         category: 分類,
-        發放方式: document.getElementById('發放方式').value,
+        發放方式: 'qr',
         couponNameCode: document.getElementById('couponNameCode').value.trim(),
         啟用方式: document.getElementById('啟用方式').value,
         status: document.getElementById('status').value,
@@ -474,7 +465,6 @@
       document.getElementById('活動名稱').value = item.活動名稱 || '';
       document.getElementById('品項').value = item.品項 || '';
       document.getElementById('分類').value = item.分類 || '';
-      document.getElementById('發放方式').value = item.發放方式 || 'qr';
       document.getElementById('couponNameCode').value = item.couponNameCode || '';
       document.getElementById('啟用方式').value = item.啟用方式 || '今天啟用';
       document.getElementById('status').value = item.status || '啟用';
@@ -487,7 +477,6 @@
       document.getElementById('活動名稱').value = '';
       document.getElementById('品項').value = '';
       document.getElementById('分類').value = '';
-      document.getElementById('發放方式').value = 'qr';
       document.getElementById('couponNameCode').value = '';
       document.getElementById('啟用方式').value = '今天啟用';
       document.getElementById('status').value = '啟用';
@@ -595,7 +584,6 @@
         分類：${escapeHtml(item.分類 || '')}<br>
         券別代碼：${escapeHtml(item.couponNameCode || '')}<br>
         啟用方式：${escapeHtml(item.啟用方式 || '')}<br>
-        發放方式：${escapeHtml(item.發放方式 || '')}<br>
         狀態：${escapeHtml(item.status || '')}<br>
         備註：${escapeHtml(item.note || '-')}
       `;
