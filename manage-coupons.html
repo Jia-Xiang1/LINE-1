@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>券別管理</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .sub {
+      color: #6b7280;
+      margin-bottom: 18px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      background: #fff;
+      color: #111827;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 84px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #111827;
+      box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 800;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status.on {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.off {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .url-box {
+      word-break: break-all;
+      line-height: 1.6;
+      max-width: 320px;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .msg {
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .ok { color: #16a34a; }
+    .err { color: #dc2626; }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 14px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>券別管理</h1>
+      <div class="sub">
+        統一設定活動名稱、類別、品項、開始日、截止日，並自動生成可發送的領券網址。
+      </div>
+
+      <input type="hidden" id="configId" />
+
+      <div class="grid">
+        <div class="field">
+          <label for="eventName">活動名稱</label>
+          <input id="eventName" type="text" placeholder="例如：開幕活動" />
+        </div>
+
+        <div class="field">
+          <label for="category">類別</label>
+          <input id="category" type="text" placeholder="例如：現金券 / 主餐券 / 升級券 / 員工券" />
+        </div>
+
+        <div class="field">
+          <label for="itemName">品項</label>
+          <input id="itemName" type="text" placeholder="例如：現金折價券 $50元" />
+        </div>
+
+        <div class="field">
+          <label for="status">狀態</label>
+          <select id="status">
+            <option value="啟用">啟用</option>
+            <option value="停用">停用</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="startDate">開始日</label>
+          <input id="startDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label for="endDate">截止日</label>
+          <input id="endDate" type="date" />
+        </div>
+
+        <div class="field full">
+          <label for="generatedUrl">生成網址</label>
+          <textarea id="generatedUrl" rows="3" readonly placeholder="儲存後自動產生網址"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="saveConfig()">儲存券別</button>
+        <button class="btn-secondary" onclick="resetForm()">清空重填</button>
+        <button class="btn-secondary" onclick="copyGeneratedUrl()">複製網址</button>
+      </div>
+
+      <div id="message" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">所有券別</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>活動名稱</th>
+              <th>類別</th>
+              <th>品項</th>
+              <th>開始日</th>
+              <th>截止日</th>
+              <th>狀態</th>
+              <th>生成網址</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="8">讀取中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let couponConfigs = [];
+
+    function setMessage(text, isError = false) {
+      const el = document.getElementById('message');
+      el.textContent = text || '';
+      el.className = 'msg ' + (isError ? 'err' : 'ok');
+    }
+
+    function getFormData() {
+      return {
+        id: document.getElementById('configId').value.trim(),
+        eventName: document.getElementById('eventName').value.trim(),
+        category: document.getElementById('category').value.trim(),
+        itemName: document.getElementById('itemName').value.trim(),
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        status: document.getElementById('status').value
+      };
+    }
+
+    function setFormData(item) {
+      document.getElementById('configId').value = item.id || '';
+      document.getElementById('eventName').value = item.eventName || '';
+      document.getElementById('category').value = item.category || '';
+      document.getElementById('itemName').value = item.itemName || '';
+      document.getElementById('startDate').value = item.startDate || '';
+      document.getElementById('endDate').value = item.endDate || '';
+      document.getElementById('status').value = item.status || '啟用';
+      document.getElementById('generatedUrl').value = item.claimUrl || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('configId').value = '';
+      document.getElementById('eventName').value = '';
+      document.getElementById('category').value = '';
+      document.getElementById('itemName').value = '';
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      document.getElementById('status').value = '啟用';
+      document.getElementById('generatedUrl').value = '';
+      setMessage('');
+    }
+
+    function copyGeneratedUrl() {
+      const text = document.getElementById('generatedUrl').value.trim();
+      if (!text) {
+        setMessage('目前沒有可複製的網址', true);
+        return;
+      }
+
+      navigator.clipboard.writeText(text)
+        .then(() => setMessage('網址已複製'))
+        .catch(() => setMessage('複製失敗，請手動複製', true));
+    }
+
+    function saveConfig() {
+      const data = getFormData();
+
+      if (!data.eventName) return setMessage('請輸入活動名稱', true);
+      if (!data.category) return setMessage('請輸入類別', true);
+      if (!data.itemName) return setMessage('請輸入品項', true);
+      if (!data.startDate) return setMessage('請輸入開始日', true);
+      if (!data.endDate) return setMessage('請輸入截止日', true);
+      if (data.startDate > data.endDate) return setMessage('開始日不可晚於截止日', true);
+
+      setMessage('儲存中...');
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!res || !res.success) {
+            setMessage((res && res.message) || '儲存失敗', true);
+            return;
+          }
+
+          setMessage(res.message || '儲存成功');
+          setFormData(res.data || {});
+          loadConfigs();
+        })
+        .withFailureHandler(err => {
+          setMessage('儲存失敗：' + err.message, true);
+        })
+        .saveCouponConfig(data);
+    }
+
+    function deleteConfig(id) {
+      if (!confirm('確定要刪除此券別嗎？')) return;
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!res || !res.success) {
+            setMessage((res && res.message) || '刪除失敗', true);
+            return;
+          }
+
+          setMessage('刪除成功');
+          resetForm();
+          loadConfigs();
+        })
+        .withFailureHandler(err => {
+          setMessage('刪除失敗：' + err.message, true);
+        })
+        .deleteCouponConfig(id);
+    }
+
+    function editConfig(id) {
+      const item = couponConfigs.find(x => x.id === id);
+      if (!item) return;
+      setFormData(item);
+    }
+
+    function copyUrlById(id) {
+      const item = couponConfigs.find(x => x.id === id);
+      if (!item || !item.claimUrl) {
+        setMessage('找不到網址', true);
+        return;
+      }
+
+      navigator.clipboard.writeText(item.claimUrl)
+        .then(() => setMessage('網址已複製'))
+        .catch(() => setMessage('複製失敗，請手動複製', true));
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+
+      if (!couponConfigs.length) {
+        tbody.innerHTML = '<tr><td colspan="8">目前尚無券別資料</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = couponConfigs.map(item => `
+        <tr>
+          <td>${escapeHtml(item.eventName || '')}</td>
+          <td>${escapeHtml(item.category || '')}</td>
+          <td>${escapeHtml(item.itemName || '')}</td>
+          <td>${escapeHtml(item.startDate || '')}</td>
+          <td>${escapeHtml(item.endDate || '')}</td>
+          <td>
+            <span class="status ${item.status === '啟用' ? 'on' : 'off'}">
+              ${escapeHtml(item.status || '')}
+            </span>
+          </td>
+          <td class="url-box">${escapeHtml(item.claimUrl || '')}</td>
+          <td>
+            <div class="row-actions">
+              <button class="mini-btn btn-secondary" onclick="editConfig('${escapeAttr(item.id)}')">編輯</button>
+              <button class="mini-btn btn-secondary" onclick="copyUrlById('${escapeAttr(item.id)}')">複製網址</button>
+              <button class="mini-btn btn-danger" onclick="deleteConfig('${escapeAttr(item.id)}')">刪除</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadConfigs() {
+      google.script.run
+        .withSuccessHandler(res => {
+          couponConfigs = Array.isArray(res) ? res : [];
+          renderTable();
+        })
+        .withFailureHandler(err => {
+          document.getElementById('tableBody').innerHTML =
+            '<tr><td colspan="8">讀取失敗：' + escapeHtml(err.message) + '</td></tr>';
+        })
+        .getCouponConfigs();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function escapeAttr(str) {
+      return String(str).replaceAll("'", "\\'");
+    }
+
+    loadConfigs();
+  </script>
+</body>
+</html>
