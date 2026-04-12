@@ -7,20 +7,17 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
       background: linear-gradient(180deg, #f9fafb 0%, #eef2f7 100%);
       color: #111827;
     }
-
     .wrap {
       max-width: 560px;
       margin: 0 auto;
       padding: 22px 16px 40px;
     }
-
     .card {
       background: rgba(255,255,255,0.97);
       border-radius: 24px;
@@ -28,14 +25,12 @@
       padding: 22px 18px;
       margin-bottom: 16px;
     }
-
     .title {
       font-size: 28px;
       font-weight: 800;
       text-align: center;
       margin-bottom: 8px;
     }
-
     .sub {
       text-align: center;
       color: #6b7280;
@@ -43,21 +38,18 @@
       margin-bottom: 18px;
       line-height: 1.6;
     }
-
     .coupon-box {
       background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
       border: 1px solid #fed7aa;
       border-radius: 18px;
       padding: 18px;
     }
-
     .label {
       color: #6b7280;
       font-size: 13px;
       margin-bottom: 4px;
       font-weight: 700;
     }
-
     .value {
       font-size: 18px;
       font-weight: 800;
@@ -65,14 +57,12 @@
       line-height: 1.5;
       word-break: break-word;
     }
-
     .period {
       font-size: 15px;
       font-weight: 700;
       color: #92400e;
       line-height: 1.6;
     }
-
     .msg {
       margin-top: 14px;
       text-align: center;
@@ -80,10 +70,8 @@
       font-weight: 800;
       line-height: 1.6;
     }
-
     .ok { color: #15803d; }
     .err { color: #dc2626; }
-
     .user-box {
       background: #f9fafb;
       border-radius: 16px;
@@ -91,8 +79,8 @@
       margin-top: 16px;
       font-size: 14px;
       line-height: 1.8;
+      word-break: break-word;
     }
-
     .btn {
       width: 100%;
       border: 0;
@@ -103,22 +91,18 @@
       cursor: pointer;
       margin-top: 14px;
     }
-
     .btn-primary {
       background: #111827;
       color: white;
     }
-
     .btn-secondary {
       background: #e5e7eb;
       color: #111827;
     }
-
     .btn:disabled {
       opacity: 0.5;
       pointer-events: none;
     }
-
     .success-box {
       display: none;
       background: #ecfdf5;
@@ -127,14 +111,12 @@
       padding: 16px;
       margin-top: 16px;
     }
-
     .success-title {
       color: #065f46;
       font-weight: 800;
       font-size: 18px;
       margin-bottom: 10px;
     }
-
     .success-line {
       font-size: 14px;
       line-height: 1.9;
@@ -181,10 +163,12 @@
   </div>
 
   <script>
-    const LIFF_ID = '2009551865-EGhyWa2w';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwp1KP5xrCUXw9TvwBOEEwu1aE-yjdsxKU2gfQXX1k8hR7vlPCR0-W6bGSgWJpmjUA1/exec';
+    const LIFF_ID = '你的LIFF_ID';
+    const COUPON_LIST_URL = `${location.origin}${location.pathname.replace('claim.html', 'coupon-list.html')}`;
+
     let profileData = { userId: '', displayName: '' };
     let claimConfig = null;
-    let couponListUrl = '';
 
     function getQueryParam(name) {
       const url = new URL(window.location.href);
@@ -200,6 +184,26 @@
     function disableClaimButton(disabled) {
       const btn = document.getElementById('claimBtn');
       btn.disabled = !!disabled;
+    }
+
+    async function apiGet(action, params = {}) {
+      const url = new URL(GAS_API_URL);
+      url.searchParams.set('action', action);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) url.searchParams.set(k, v);
+      });
+
+      const res = await fetch(url.toString());
+      return await res.json();
+    }
+
+    async function apiPost(payload) {
+      const res = await fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
     }
 
     async function initLiff() {
@@ -225,47 +229,46 @@
       }
     }
 
-    function loadClaimConfig() {
+    async function loadClaimConfig() {
       const configId = getQueryParam('configId');
+
       if (!configId) {
         setMessage('缺少券別參數', true);
         disableClaimButton(true);
         return;
       }
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (!res || !res.success || !res.data) {
-            setMessage((res && res.message) || '找不到券別資料', true);
-            disableClaimButton(true);
-            return;
-          }
+      try {
+        const res = await apiGet('getClaimConfig', { configId });
 
-          claimConfig = res.data;
-          couponListUrl = res.couponListUrl || '';
-
-          document.getElementById('eventType').textContent = claimConfig.eventName || '-';
-          document.getElementById('couponCategory').textContent = claimConfig.category || '-';
-          document.getElementById('couponName').textContent = claimConfig.itemName || '-';
-          document.getElementById('couponPeriod').textContent =
-            `${claimConfig.startDate || '-'} ～ ${claimConfig.endDate || '-'}`;
-
-          if (!res.claimable) {
-            setMessage(res.message || '目前不可領取', true);
-            disableClaimButton(true);
-          } else {
-            setMessage('目前可領取', false);
-            disableClaimButton(false);
-          }
-        })
-        .withFailureHandler(err => {
-          setMessage('讀取券別失敗：' + err.message, true);
+        if (!res || !res.success || !res.data) {
+          setMessage((res && res.message) || '找不到券別資料', true);
           disableClaimButton(true);
-        })
-        .getClaimConfig(configId);
+          return;
+        }
+
+        claimConfig = res.data;
+
+        document.getElementById('eventType').textContent = claimConfig.eventName || '-';
+        document.getElementById('couponCategory').textContent = claimConfig.category || '-';
+        document.getElementById('couponName').textContent = claimConfig.itemName || '-';
+        document.getElementById('couponPeriod').textContent =
+          `${claimConfig.startDate || '-'} ～ ${claimConfig.endDate || '-'}`;
+
+        if (!res.claimable) {
+          setMessage(res.message || '目前不可領取', true);
+          disableClaimButton(true);
+        } else {
+          setMessage('目前可領取', false);
+          disableClaimButton(false);
+        }
+      } catch (err) {
+        setMessage('讀取券別失敗：' + err.message, true);
+        disableClaimButton(true);
+      }
     }
 
-    function submitClaim() {
+    async function submitClaim() {
       if (!claimConfig || !claimConfig.id) {
         setMessage('缺少券別資料', true);
         return;
@@ -279,46 +282,38 @@
       disableClaimButton(true);
       setMessage('領取中...');
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (!res || !res.success) {
-            setMessage((res && res.message) || '領取失敗', true);
-            disableClaimButton(false);
-            return;
-          }
-
-          setMessage('領取成功');
-          document.getElementById('successBox').style.display = 'block';
-          document.getElementById('successDetail').innerHTML = `
-            活動名稱：${escapeHtml(res.data.eventName || '')}<br>
-            類別：${escapeHtml(res.data.category || '')}<br>
-            品項：${escapeHtml(res.data.itemName || '')}<br>
-            領取日：${escapeHtml(res.data.claimDate || '')}<br>
-            啟用日：${escapeHtml(res.data.activeDate || '')}<br>
-            截止日：${escapeHtml(res.data.expireDate || '')}
-          `;
-        })
-        .withFailureHandler(err => {
-          setMessage('領取失敗：' + err.message, true);
-          disableClaimButton(false);
-        })
-        .claimCoupon({
+      try {
+        const res = await apiPost({
+          action: 'claimCoupon',
           configId: claimConfig.id,
           userId: profileData.userId,
           displayName: profileData.displayName
         });
+
+        if (!res || !res.success) {
+          setMessage((res && res.message) || '領取失敗', true);
+          disableClaimButton(false);
+          return;
+        }
+
+        setMessage('領取成功');
+        document.getElementById('successBox').style.display = 'block';
+        document.getElementById('successDetail').innerHTML = `
+          活動名稱：${escapeHtml(res.data.eventName || '')}<br>
+          類別：${escapeHtml(res.data.category || '')}<br>
+          品項：${escapeHtml(res.data.itemName || '')}<br>
+          領取日：${escapeHtml(res.data.claimDate || '')}<br>
+          啟用日：${escapeHtml(res.data.activeDate || '')}<br>
+          截止日：${escapeHtml(res.data.expireDate || '')}
+        `;
+      } catch (err) {
+        setMessage('領取失敗：' + err.message, true);
+        disableClaimButton(false);
+      }
     }
 
     function goCouponList() {
-      if (couponListUrl) {
-        window.location.href = couponListUrl;
-        return;
-      }
-
-      const url = new URL(window.location.href);
-      url.searchParams.set('page', 'coupon-list');
-      url.searchParams.delete('configId');
-      window.location.href = url.toString();
+      window.location.href = COUPON_LIST_URL;
     }
 
     function escapeHtml(str) {
@@ -332,7 +327,7 @@
 
     async function initPage() {
       await initLiff();
-      loadClaimConfig();
+      await loadClaimConfig();
     }
 
     initPage();
