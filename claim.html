@@ -8,83 +8,162 @@
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --bg: #f6f0e4;
+      --bg-card: rgba(255,255,255,0.56);
+      --line: rgba(197, 82, 36, 0.12);
+      --primary: #c63b1e;
+      --primary-dark: #a52d16;
+      --accent: #d89a1d;
+      --text: #7a2f1d;
+      --text-soft: #9a6d5f;
+      --border: rgba(198, 59, 30, 0.10);
+      --shadow: 0 10px 24px rgba(152, 73, 35, 0.08);
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       font-family: "PingFang TC","Noto Sans TC",Arial,sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top, #3b1f0f 0%, #1a0f08 35%, #0e0a08 70%, #080808 100%);
-      color: #fff7ed;
+        radial-gradient(circle at top, rgba(255,255,255,0.55), rgba(255,255,255,0) 30%),
+        repeating-radial-gradient(circle at 50% -180px,
+          transparent 0 120px,
+          rgba(198,59,30,0.015) 120px 122px),
+        var(--bg);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.45;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='160' height='64' viewBox='0 0 160 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 32C13.333 21.333 26.667 16 40 16s26.667 5.333 40 16 26.667 16 40 16 26.667-5.333 40-16' fill='none' stroke='%23d36b55' stroke-width='1.2' stroke-opacity='0.16'/%3E%3C/svg%3E");
+      background-size: 160px 64px;
+      background-repeat: repeat;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 54px;
+      background: #0b0b0b;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      letter-spacing: 1px;
     }
 
     .wrap {
-      max-width: 580px;
+      max-width: 620px;
       margin: 0 auto;
       padding: 22px 16px 40px;
+      position: relative;
+      z-index: 1;
     }
 
     .hero {
       text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
-    .title {
-      font-size: 32px;
-      font-weight: 900;
+    .badge-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      font-size: 15px;
       margin-bottom: 8px;
-      color: #ffd39d;
-      text-shadow: 0 0 20px rgba(255,179,71,0.28);
-      letter-spacing: 1px;
     }
 
-    .sub {
-      color: #fcd9b6;
-      font-size: 14px;
+    .badge-line::before,
+    .badge-line::after {
+      content: "";
+      width: 44px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(198, 59, 30, 0.5);
+    }
+
+    .hero-title {
+      font-size: 34px;
+      line-height: 1.2;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-soft);
       line-height: 1.7;
     }
 
-    .card {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,214,153,0.18);
-      box-shadow: 0 0 24px rgba(255,166,77,0.10);
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+      padding: 20px;
       backdrop-filter: blur(8px);
-      border-radius: 26px;
-      padding: 18px;
     }
 
-    .coupon-box {
-      background: rgba(255,255,255,0.08);
-      border-radius: 20px;
+    .coupon-panel {
+      background: rgba(255,255,255,0.42);
+      border: 1px solid rgba(198,59,30,0.08);
+      border-radius: 24px;
       padding: 16px;
       margin-bottom: 14px;
-      border: 1px solid rgba(255,214,153,0.12);
     }
 
     .label {
-      color: #ffc98e;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-soft);
       margin-bottom: 4px;
     }
 
     .value {
-      font-size: 19px;
+      font-size: 22px;
       font-weight: 900;
-      line-height: 1.5;
+      color: var(--primary);
+      line-height: 1.45;
       margin-bottom: 12px;
       word-break: break-word;
-      color: #fff5e7;
     }
 
-    .user-box {
-      background: rgba(255,255,255,0.06);
-      border-radius: 18px;
+    .user-box,
+    .notice-box,
+    .success-box {
+      background: rgba(255,255,255,0.42);
+      border: 1px solid rgba(198,59,30,0.08);
+      border-radius: 22px;
       padding: 14px;
-      line-height: 1.9;
+      line-height: 1.85;
       font-size: 14px;
-      margin-bottom: 12px;
+      margin-top: 12px;
+      color: var(--text);
       word-break: break-word;
-      color: #ffe8c9;
+    }
+
+    .success-box {
+      display: none;
+      background: rgba(255,255,255,0.62);
+    }
+
+    .success-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 8px;
     }
 
     .status-box {
@@ -96,45 +175,43 @@
       min-height: 28px;
     }
 
-    .ok { color: #86efac; }
-    .err { color: #fca5a5; }
+    .ok { color: #2f855a; }
+    .err { color: #c53030; }
 
-    .notice-box {
-      background: rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.85;
-      font-size: 14px;
+    .button-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       margin-top: 12px;
-      color: #ffe8c9;
     }
 
     .btn {
       width: 100%;
       border: 0;
-      border-radius: 18px;
-      padding: 15px 16px;
-      font-size: 16px;
+      border-radius: 999px;
+      padding: 15px 22px;
+      font-size: 18px;
       font-weight: 900;
       cursor: pointer;
-      margin-top: 10px;
-      transition: transform .15s ease, opacity .15s ease;
+      transition: transform .12s ease, opacity .12s ease;
     }
 
     .btn:active {
-      transform: scale(0.99);
+      transform: scale(0.985);
     }
 
     .btn-main {
-      background: linear-gradient(180deg, #ffba52, #ff8c1a);
-      color: #2a1300;
-      box-shadow: 0 10px 20px rgba(255,140,26,0.18);
+      color: white;
+      background: linear-gradient(180deg, #d53a20 0%, #c22e19 45%, #c12619 100%);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.12),
+        0 10px 18px rgba(198,59,30,0.18);
     }
 
     .btn-sub {
-      background: rgba(255,255,255,0.12);
-      color: #fff5e7;
-      border: 1px solid rgba(255,214,153,0.18);
+      background: rgba(255,255,255,0.78);
+      color: var(--primary);
+      border: 1px solid rgba(198,59,30,0.12);
     }
 
     .btn[disabled] {
@@ -143,44 +220,29 @@
       transform: none;
     }
 
-    .success-box {
-      display: none;
-      margin-top: 14px;
-      background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.30);
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.9;
-      color: #d1fae5;
-      word-break: break-word;
-    }
-
-    .success-title {
-      font-size: 18px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
     @media (max-width: 640px) {
-      .title {
+      .hero-title {
         font-size: 28px;
       }
 
       .value {
-        font-size: 18px;
+        font-size: 20px;
       }
     }
   </style>
 </head>
 <body>
+  <div class="topbar">領取優惠券</div>
+
   <div class="wrap">
     <div class="hero">
-      <div class="title">領取優惠券</div>
-      <div class="sub">請確認券別資訊後進行領取</div>
+      <div class="badge-line">確認券別資訊</div>
+      <div class="hero-title">券別無誤！立即領取！</div>
+      <div class="hero-sub">請確認券別內容後再進行領取</div>
     </div>
 
-    <div class="card">
-      <div class="coupon-box">
+    <div class="section-card">
+      <div class="coupon-panel">
         <div class="label">活動名稱</div>
         <div id="活動名稱" class="value">讀取中...</div>
 
@@ -189,9 +251,6 @@
 
         <div class="label">分類</div>
         <div id="分類" class="value">讀取中...</div>
-
-        <div class="label">券別名稱</div>
-        <div id="couponName" class="value">讀取中...</div>
 
         <div class="label">活動期間</div>
         <div id="period" class="value">讀取中...</div>
@@ -204,12 +263,14 @@
 
       <div id="message" class="status-box"></div>
 
-      <button id="claimBtn" class="btn btn-main" onclick="claimCoupon()">立即領取</button>
-      <button class="btn btn-sub" onclick="goCouponList()">前往我的優惠券</button>
+      <div class="button-row">
+        <button id="claimBtn" class="btn btn-main" onclick="claimCoupon()">✦ 立即領取 ✦</button>
+        <button class="btn btn-sub" onclick="goCouponList()">前往我的優惠券</button>
+      </div>
 
       <div class="notice-box">
-        領取後將自動建立你的專屬優惠券。<br>
-        啟用日依系統規則顯示於卷包頁，實際可使用狀態以卷包頁為準。
+        領取成功後，系統將建立你的專屬優惠券。<br>
+        實際可使用狀態請以卷包頁顯示為準。
       </div>
 
       <div id="successBox" class="success-box">
@@ -300,7 +361,6 @@
         document.getElementById('活動名稱').textContent = currentConfig.活動名稱 || '-';
         document.getElementById('品項').textContent = currentConfig.品項 || '-';
         document.getElementById('分類').textContent = currentConfig.分類 || '-';
-        document.getElementById('couponName').textContent = currentConfig.couponName || '-';
         document.getElementById('period').textContent =
           `${currentConfig.開始日 || '-'} ～ ${currentConfig.截止日 || '-'}`;
 
@@ -352,8 +412,9 @@
 
         successBox.style.display = 'block';
         successDetail.innerHTML = `
-          券名稱：${escapeHtml(res.data.couponName || '')}<br>
-          券別分類：${escapeHtml(res.data.category || '')}<br>
+          活動名稱：${escapeHtml(res.data.活動類別 || '')}<br>
+          品項：${escapeHtml(res.data.品項 || '')}<br>
+          分類：${escapeHtml(res.data.分類 || '')}<br>
           領取時間：${escapeHtml(res.data.claimAt || '')}<br>
           啟用日：${escapeHtml(res.data.activateAt || '')}<br>
           到期日：${escapeHtml(res.data.expireAt || '')}<br>
