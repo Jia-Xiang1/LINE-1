@@ -11,10 +11,7 @@
     :root {
       --bg: #f6f0e4;
       --bg-card: rgba(255,255,255,0.56);
-      --line: rgba(197, 82, 36, 0.12);
       --primary: #c63b1e;
-      --primary-dark: #a52d16;
-      --accent: #d89a1d;
       --text: #7a2f1d;
       --text-soft: #9a6d5f;
       --border: rgba(198, 59, 30, 0.10);
@@ -249,7 +246,7 @@
     <div class="hero">
       <div class="badge-line">查看已領優惠券</div>
       <div class="hero-title">券包無誤！立即查看！</div>
-      <div class="hero-sub">依券別分類分組，類別內依到期日排序</div>
+      <div class="hero-sub">依券別分類分組，並依到期日排序</div>
     </div>
 
     <div class="user-box">
@@ -263,7 +260,7 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFQEygXy8QlMDwQPpwY0ZJyTHHViOsDA9iEk80nZUDEqO9JcElRbDc3R6cFeT9n8iT/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyOw_QU9MFpN8CDrEzMoeWasyLwegokiZWhA39Rx3ks-c64WN_dkaJibjtafCDOTJzC/exec';
     const LIFF_ID = '2009551865-e6Y0VCE6';
 
     let profileData = { userId: '', displayName: '' };
@@ -342,8 +339,8 @@
                   發放方式：${escapeHtml(item.發放方式 || '-')}<br>
                   領取時間：${escapeHtml(item.claimAt || '-')}<br>
                   啟用日：${escapeHtml(item.activateAt || '-')}<br>
-                  使用日：${escapeHtml(item.usedAt || '-')}<br>
                   到期日：${escapeHtml(item.expireAt || '-')}<br>
+                  使用日：${escapeHtml(item.usedAt || '-')}<br>
                   狀態：${escapeHtml(item.status || '-')}<br>
                   券號：${escapeHtml(item.couponId || '-')}<br>
                   備註：${escapeHtml(item.note || '-')}
