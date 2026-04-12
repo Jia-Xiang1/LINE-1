@@ -11,10 +11,7 @@
     :root {
       --bg: #f6f0e4;
       --bg-card: rgba(255,255,255,0.56);
-      --line: rgba(197, 82, 36, 0.12);
       --primary: #c63b1e;
-      --primary-dark: #a52d16;
-      --accent: #d89a1d;
       --text: #7a2f1d;
       --text-soft: #9a6d5f;
       --border: rgba(198, 59, 30, 0.10);
@@ -238,7 +235,7 @@
     <div class="hero">
       <div class="badge-line">確認券別資訊</div>
       <div class="hero-title">券別無誤！立即領取！</div>
-      <div class="hero-sub">請確認券別內容後再進行領取</div>
+      <div class="hero-sub">領取後將依券別設定自動計算啟用日與到期日</div>
     </div>
 
     <div class="section-card">
@@ -252,8 +249,8 @@
         <div class="label">分類</div>
         <div id="分類" class="value">讀取中...</div>
 
-        <div class="label">活動期間</div>
-        <div id="period" class="value">讀取中...</div>
+        <div class="label">啟用方式</div>
+        <div id="啟用方式" class="value">讀取中...</div>
       </div>
 
       <div class="user-box">
@@ -269,8 +266,9 @@
       </div>
 
       <div class="notice-box">
-        領取成功後，系統將建立你的專屬優惠券。<br>
-        實際可使用狀態請以卷包頁顯示為準。
+        若本券設定為「今天啟用」，則領取當天即可使用。<br>
+        若設定為「隔天啟用」，則需隔日才可使用。<br>
+        到期日會依啟用日起自動往後計算 30 天。
       </div>
 
       <div id="successBox" class="success-box">
@@ -281,7 +279,7 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFQEygXy8QlMDwQPpwY0ZJyTHHViOsDA9iEk80nZUDEqO9JcElRbDc3R6cFeT9n8iT/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyOw_QU9MFpN8CDrEzMoeWasyLwegokiZWhA39Rx3ks-c64WN_dkaJibjtafCDOTJzC/exec';
     const LIFF_ID = '2009551865-EGhyWa2w';
     const COUPON_LIST_URL = 'https://jia-xiang1.github.io/LINE-1/coupon-list.html';
 
@@ -361,8 +359,7 @@
         document.getElementById('活動名稱').textContent = currentConfig.活動名稱 || '-';
         document.getElementById('品項').textContent = currentConfig.品項 || '-';
         document.getElementById('分類').textContent = currentConfig.分類 || '-';
-        document.getElementById('period').textContent =
-          `${currentConfig.開始日 || '-'} ～ ${currentConfig.截止日 || '-'}`;
+        document.getElementById('啟用方式').textContent = currentConfig.啟用方式 || '今天啟用';
 
         if (!res.claimable) {
           setMessage(res.message || '目前不可領取', true);
