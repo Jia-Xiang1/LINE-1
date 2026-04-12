@@ -27,7 +27,6 @@
     .title {
       font-size: 34px;
       font-weight: 900;
-      letter-spacing: 1px;
       margin-bottom: 8px;
       text-shadow: 0 0 20px rgba(255, 179, 71, 0.28);
     }
@@ -73,12 +72,21 @@
       font-size: 15px;
       outline: none;
     }
-    input::placeholder, textarea::placeholder {
-      color: rgba(255,255,255,0.52);
-    }
     textarea {
       resize: vertical;
       min-height: 88px;
+    }
+    .read-only-box {
+      width: 100%;
+      border: 1px solid rgba(255,214,153,0.20);
+      background: rgba(255,255,255,0.06);
+      color: #ffe7c7;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 15px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
     }
     .actions {
       display: flex;
@@ -144,14 +152,12 @@
       line-height: 1.7;
       color: #ffe7c7;
     }
-
     .section-title {
       font-size: 22px;
       font-weight: 900;
       margin-bottom: 12px;
       color: #ffd39d;
     }
-
     .table-wrap {
       overflow-x: auto;
     }
@@ -205,9 +211,6 @@
       .qr-wrap {
         grid-template-columns: 1fr;
       }
-      .qr-box {
-        width: 220px;
-      }
       .title {
         font-size: 28px;
       }
@@ -218,7 +221,7 @@
   <div class="wrap">
     <div class="hero">
       <div class="title">券別管理系統</div>
-      <div class="sub">新增、編輯、產生領券網址與 QR，並可直接下載 QR 圖片</div>
+      <div class="sub">開始日僅可選今天或明天，使用期限固定 30 天，可直接生成與下載 QR</div>
     </div>
 
     <div class="card">
@@ -271,12 +274,17 @@
 
         <div class="field">
           <label>開始日</label>
-          <input id="開始日" type="date" />
+          <select id="開始日" onchange="updateExpirePreview()"></select>
         </div>
 
         <div class="field">
-          <label>截止日</label>
-          <input id="截止日" type="date" />
+          <label>使用期限</label>
+          <div class="read-only-box">固定 30 天</div>
+        </div>
+
+        <div class="field">
+          <label>自動截止日</label>
+          <div class="read-only-box" id="截止日預覽">-</div>
         </div>
 
         <div class="field">
@@ -287,7 +295,7 @@
           </select>
         </div>
 
-        <div class="field">
+        <div class="field full">
           <label>備註</label>
           <input id="note" placeholder="例如：現折不可找零" />
         </div>
@@ -310,7 +318,7 @@
 
       <div class="qr-wrap">
         <div class="qr-box">
-          <canvas id="qrCanvas"></canvas>
+          <canvas id="qrCanvas" width="196" height="196"></canvas>
         </div>
         <div class="url-box" id="qrText">尚未生成 QR</div>
       </div>
@@ -342,10 +350,55 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzoMJy0JJGJ46tXEn9U4cjggpIZ6UugAy6tiZs67NwaWibb0i0wuh73O6aer_TCCTKo/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFQEygXy8QlMDwQPpwY0ZJyTHHViOsDA9iEk80nZUDEqO9JcElRbDc3R6cFeT9n8iT/exec';
     const CLAIM_PAGE_BASE_URL = 'https://jia-xiang1.github.io/LINE-1/claim.html';
 
     let couponConfigs = [];
+
+    function formatDateToSlash(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}/${m}/${d}`;
+    }
+
+    function formatDateToDash(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function initStartDateOptions() {
+      const select = document.getElementById('開始日');
+      const today = new Date();
+      const tomorrow = addDays(today, 1);
+
+      const opts = [
+        { value: formatDateToSlash(today), label: `今天 (${formatDateToSlash(today)})` },
+        { value: formatDateToSlash(tomorrow), label: `明天 (${formatDateToSlash(tomorrow)})` }
+      ];
+
+      select.innerHTML = opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+      updateExpirePreview();
+    }
+
+    function updateExpirePreview() {
+      const startValue = document.getElementById('開始日').value;
+      if (!startValue) {
+        document.getElementById('截止日預覽').textContent = '-';
+        return;
+      }
+      const startDate = new Date(startValue.replaceAll('/', '-'));
+      const expireDate = addDays(startDate, 30);
+      document.getElementById('截止日預覽').textContent = formatDateToSlash(expireDate);
+    }
 
     function setMessage(text, isError = false) {
       const el = document.getElementById('message');
@@ -365,7 +418,6 @@
         發放方式: document.getElementById('發放方式').value,
         couponNameCode: document.getElementById('couponNameCode').value.trim(),
         開始日: document.getElementById('開始日').value,
-        截止日: document.getElementById('截止日').value,
         status: document.getElementById('status').value,
         note: document.getElementById('note').value.trim()
       };
@@ -381,17 +433,13 @@
       document.getElementById('category').value = item.category || '';
       document.getElementById('發放方式').value = item.發放方式 || 'qr';
       document.getElementById('couponNameCode').value = item.couponNameCode || '';
-      document.getElementById('開始日').value = normalizeDate(item.開始日 || '');
-      document.getElementById('截止日').value = normalizeDate(item.截止日 || '');
+      document.getElementById('開始日').value = item.開始日 || document.getElementById('開始日').value;
       document.getElementById('status').value = item.status || '啟用';
       document.getElementById('note').value = item.note || '';
       document.getElementById('claimUrl').value = item.claimUrl || '';
       document.getElementById('qrText').textContent = item.claimUrl || '尚未生成 QR';
+      document.getElementById('截止日預覽').textContent = item.截止日 || '-';
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function normalizeDate(value) {
-      return String(value || '').replaceAll('/', '-');
     }
 
     function resetForm() {
@@ -404,8 +452,6 @@
       document.getElementById('category').value = '';
       document.getElementById('發放方式').value = 'qr';
       document.getElementById('couponNameCode').value = '';
-      document.getElementById('開始日').value = '';
-      document.getElementById('截止日').value = '';
       document.getElementById('status').value = '啟用';
       document.getElementById('note').value = '';
       document.getElementById('claimUrl').value = '';
@@ -413,6 +459,7 @@
       const canvas = document.getElementById('qrCanvas');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      initStartDateOptions();
       setMessage('');
     }
 
@@ -445,9 +492,7 @@
       if (!data.couponName) return setMessage('請輸入 couponName', true);
       if (!data.category) return setMessage('請輸入 category', true);
       if (!data.couponNameCode) return setMessage('請輸入 couponNameCode', true);
-      if (!data.開始日) return setMessage('請輸入開始日', true);
-      if (!data.截止日) return setMessage('請輸入截止日', true);
-      if (data.開始日 > data.截止日) return setMessage('開始日不可晚於截止日', true);
+      if (!data.開始日) return setMessage('請選擇開始日', true);
 
       setMessage('儲存中...');
 
@@ -592,6 +637,7 @@
       return String(str).replaceAll("'", "\\'");
     }
 
+    initStartDateOptions();
     loadConfigs();
   </script>
 </body>
