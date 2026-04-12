@@ -3,125 +3,105 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>領券頁</title>
+  <title>領取優惠券</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
-      background: linear-gradient(180deg, #f9fafb 0%, #eef2f7 100%);
-      color: #111827;
+      font-family: "PingFang TC","Noto Sans TC",Arial,sans-serif;
+      background:
+        radial-gradient(circle at top, #311508 0%, #17100c 40%, #0b0b0b 100%);
+      color: #fff4e5;
+      min-height: 100vh;
     }
     .wrap {
       max-width: 560px;
       margin: 0 auto;
-      padding: 22px 16px 40px;
+      padding: 24px 16px 40px;
     }
     .card {
-      background: rgba(255,255,255,0.97);
-      border-radius: 24px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
-      padding: 22px 18px;
-      margin-bottom: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,214,153,0.18);
+      border-radius: 26px;
+      box-shadow: 0 0 28px rgba(255,166,77,0.10);
+      padding: 20px;
     }
     .title {
-      font-size: 28px;
-      font-weight: 800;
+      font-size: 30px;
+      font-weight: 900;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      color: #ffd39d;
     }
     .sub {
       text-align: center;
-      color: #6b7280;
+      color: #fcd9b6;
       font-size: 14px;
       margin-bottom: 18px;
-      line-height: 1.6;
     }
     .coupon-box {
-      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
-      border: 1px solid #fed7aa;
-      border-radius: 18px;
-      padding: 18px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
     }
     .label {
-      color: #6b7280;
+      color: #ffc98e;
       font-size: 13px;
-      margin-bottom: 4px;
       font-weight: 700;
+      margin-bottom: 4px;
     }
     .value {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 14px;
+      font-size: 19px;
+      font-weight: 900;
       line-height: 1.5;
+      margin-bottom: 12px;
       word-break: break-word;
     }
-    .period {
-      font-size: 15px;
-      font-weight: 700;
-      color: #92400e;
-      line-height: 1.6;
-    }
     .msg {
-      margin-top: 14px;
       text-align: center;
-      font-size: 15px;
+      margin: 12px 0;
       font-weight: 800;
-      line-height: 1.6;
     }
-    .ok { color: #15803d; }
-    .err { color: #dc2626; }
+    .ok { color: #86efac; }
+    .err { color: #fca5a5; }
     .user-box {
-      background: #f9fafb;
-      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 18px;
       padding: 14px;
-      margin-top: 16px;
-      font-size: 14px;
       line-height: 1.8;
+      font-size: 14px;
+      margin-bottom: 12px;
       word-break: break-word;
     }
     .btn {
       width: 100%;
       border: 0;
-      border-radius: 16px;
-      padding: 15px 16px;
+      border-radius: 18px;
+      padding: 14px 16px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
-      margin-top: 14px;
+      margin-top: 10px;
     }
-    .btn-primary {
-      background: #111827;
-      color: white;
+    .btn-main {
+      background: linear-gradient(180deg, #ffba52, #ff8c1a);
+      color: #2a1300;
     }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-    .btn:disabled {
-      opacity: 0.5;
-      pointer-events: none;
+    .btn-sub {
+      background: rgba(255,255,255,0.12);
+      color: #fff5e7;
     }
     .success-box {
       display: none;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
+      margin-top: 14px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.30);
       border-radius: 18px;
-      padding: 16px;
-      margin-top: 16px;
-    }
-    .success-title {
-      color: #065f46;
-      font-weight: 800;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    .success-line {
-      font-size: 14px;
-      line-height: 1.9;
-      color: #065f46;
-      word-break: break-word;
+      padding: 14px;
+      line-height: 1.8;
+      color: #d1fae5;
     }
   </style>
 </head>
@@ -129,46 +109,46 @@
   <div class="wrap">
     <div class="card">
       <div class="title">領取優惠券</div>
-      <div class="sub">請確認券別資訊後點擊領取</div>
+      <div class="sub">請確認券別資訊後進行領取</div>
 
       <div class="coupon-box">
         <div class="label">活動名稱</div>
-        <div id="eventType" class="value">讀取中...</div>
-
-        <div class="label">類別</div>
-        <div id="couponCategory" class="value">讀取中...</div>
+        <div id="活動名稱" class="value">讀取中...</div>
 
         <div class="label">品項</div>
+        <div id="品項" class="value">讀取中...</div>
+
+        <div class="label">分類</div>
+        <div id="分類" class="value">讀取中...</div>
+
+        <div class="label">券別名稱</div>
         <div id="couponName" class="value">讀取中...</div>
 
-        <div class="label">可領取期間</div>
-        <div id="couponPeriod" class="period">讀取中...</div>
+        <div class="label">有效期間</div>
+        <div id="period" class="value">讀取中...</div>
       </div>
 
       <div class="user-box">
-        <div>LINE 名稱：<span id="displayName">讀取中...</span></div>
-        <div>LINE userId：<span id="userId">讀取中...</span></div>
+        LINE 名稱：<span id="displayName">讀取中...</span><br>
+        LINE userId：<span id="userId">讀取中...</span>
       </div>
 
-      <div id="claimMessage" class="msg"></div>
+      <div id="message" class="msg"></div>
 
-      <button id="claimBtn" class="btn btn-primary" onclick="submitClaim()">立即領取</button>
-      <button class="btn btn-secondary" onclick="goCouponList()">前往我的優惠券</button>
+      <button id="claimBtn" class="btn btn-main" onclick="claimCoupon()">立即領取</button>
+      <button class="btn btn-sub" onclick="goCouponList()">前往我的優惠券</button>
 
-      <div id="successBox" class="success-box">
-        <div class="success-title">領取成功</div>
-        <div id="successDetail" class="success-line"></div>
-      </div>
+      <div id="successBox" class="success-box"></div>
     </div>
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwPwgRIkApg2TFdWYB6mPRZwN57txobZQvXXlQhk6K2AywumCs0PNqsltw70TsTAhW1/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzoMJy0JJGJ46tXEn9U4cjggpIZ6UugAy6tiZs67NwaWibb0i0wuh73O6aer_TCCTKo/exec';
     const LIFF_ID = '2009551865-EGhyWa2w';
-    const COUPON_LIST_URL = `${location.origin}${location.pathname.replace('claim.html', 'coupon-list.html')}`;
+    const COUPON_LIST_URL = 'https://jia-xiang1.github.io/LINE-1/coupon-list.html';
 
     let profileData = { userId: '', displayName: '' };
-    let claimConfig = null;
+    let currentConfig = null;
 
     function getQueryParam(name) {
       const url = new URL(window.location.href);
@@ -176,14 +156,9 @@
     }
 
     function setMessage(text, isError = false) {
-      const el = document.getElementById('claimMessage');
+      const el = document.getElementById('message');
       el.textContent = text || '';
       el.className = 'msg ' + (isError ? 'err' : 'ok');
-    }
-
-    function disableClaimButton(disabled) {
-      const btn = document.getElementById('claimBtn');
-      btn.disabled = !!disabled;
     }
 
     async function apiGet(action, params = {}) {
@@ -192,7 +167,6 @@
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== null) url.searchParams.set(k, v);
       });
-
       const res = await fetch(url.toString());
       return await res.json();
     }
@@ -218,97 +192,77 @@
         const profile = await liff.getProfile();
         profileData.userId = profile.userId || '';
         profileData.displayName = profile.displayName || '';
-
         document.getElementById('displayName').textContent = profileData.displayName || '-';
         document.getElementById('userId').textContent = profileData.userId || '-';
       } catch (err) {
-        document.getElementById('displayName').textContent = '讀取失敗';
-        document.getElementById('userId').textContent = '讀取失敗';
         setMessage('LIFF 初始化失敗：' + err.message, true);
-        disableClaimButton(true);
+        document.getElementById('claimBtn').disabled = true;
       }
     }
 
-    async function loadClaimConfig() {
+    async function loadConfig() {
       const configId = getQueryParam('configId');
-
       if (!configId) {
-        setMessage('缺少券別參數', true);
-        disableClaimButton(true);
+        setMessage('缺少 configId', true);
         return;
       }
 
       try {
         const res = await apiGet('getClaimConfig', { configId });
-
         if (!res || !res.success || !res.data) {
-          setMessage((res && res.message) || '找不到券別資料', true);
-          disableClaimButton(true);
+          setMessage((res && res.message) || '找不到券別', true);
           return;
         }
 
-        claimConfig = res.data;
-
-        document.getElementById('eventType').textContent = claimConfig.eventName || '-';
-        document.getElementById('couponCategory').textContent = claimConfig.category || '-';
-        document.getElementById('couponName').textContent = claimConfig.itemName || '-';
-        document.getElementById('couponPeriod').textContent =
-          `${claimConfig.startDate || '-'} ～ ${claimConfig.endDate || '-'}`;
+        currentConfig = res.data;
+        document.getElementById('活動名稱').textContent = currentConfig.活動名稱 || '-';
+        document.getElementById('品項').textContent = currentConfig.品項 || '-';
+        document.getElementById('分類').textContent = currentConfig.分類 || '-';
+        document.getElementById('couponName').textContent = currentConfig.couponName || '-';
+        document.getElementById('period').textContent = `${currentConfig.開始日 || '-'} ～ ${currentConfig.截止日 || '-'}`;
 
         if (!res.claimable) {
           setMessage(res.message || '目前不可領取', true);
-          disableClaimButton(true);
+          document.getElementById('claimBtn').disabled = true;
         } else {
-          setMessage('目前可領取', false);
-          disableClaimButton(false);
+          setMessage('目前可領取');
         }
       } catch (err) {
-        setMessage('讀取券別失敗：' + err.message, true);
-        disableClaimButton(true);
+        setMessage('讀取失敗：' + err.message, true);
       }
     }
 
-    async function submitClaim() {
-      if (!claimConfig || !claimConfig.id) {
-        setMessage('缺少券別資料', true);
-        return;
-      }
+    async function claimCoupon() {
+      if (!currentConfig || !currentConfig.id) return setMessage('缺少券別資料', true);
+      if (!profileData.userId) return setMessage('尚未取得使用者資訊', true);
 
-      if (!profileData.userId) {
-        setMessage('尚未取得 LINE 使用者資料', true);
-        return;
-      }
-
-      disableClaimButton(true);
       setMessage('領取中...');
 
       try {
         const res = await apiPost({
           action: 'claimCoupon',
-          configId: claimConfig.id,
+          configId: currentConfig.id,
           userId: profileData.userId,
-          displayName: profileData.displayName
+          name: profileData.displayName
         });
 
         if (!res || !res.success) {
           setMessage((res && res.message) || '領取失敗', true);
-          disableClaimButton(false);
           return;
         }
 
         setMessage('領取成功');
         document.getElementById('successBox').style.display = 'block';
-        document.getElementById('successDetail').innerHTML = `
-          活動名稱：${escapeHtml(res.data.eventName || '')}<br>
+        document.getElementById('successBox').innerHTML = `
+          領取成功<br>
+          券名稱：${escapeHtml(res.data.couponName || '')}<br>
           類別：${escapeHtml(res.data.category || '')}<br>
-          品項：${escapeHtml(res.data.itemName || '')}<br>
-          領取日：${escapeHtml(res.data.claimDate || '')}<br>
-          啟用日：${escapeHtml(res.data.activeDate || '')}<br>
-          截止日：${escapeHtml(res.data.expireDate || '')}
+          啟用日：${escapeHtml(res.data.activateAt || '')}<br>
+          到期日：${escapeHtml(res.data.expireAt || '')}<br>
+          券號：${escapeHtml(res.data.couponId || '')}
         `;
       } catch (err) {
         setMessage('領取失敗：' + err.message, true);
-        disableClaimButton(false);
       }
     }
 
@@ -327,7 +281,7 @@
 
     async function initPage() {
       await initLiff();
-      await loadClaimConfig();
+      await loadConfig();
     }
 
     initPage();
