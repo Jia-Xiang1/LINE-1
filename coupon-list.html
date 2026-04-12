@@ -265,6 +265,20 @@
 
     let profileData = { userId: '', displayName: '' };
 
+    function formatClaimDate(value) {
+      if (!value || value === '-') return '-';
+
+      const d = new Date(value);
+      if (isNaN(d.getTime())) {
+        return String(value).split(' ')[0] || String(value);
+      }
+
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}/${m}/${day}`;
+    }
+
     async function apiGet(action, params = {}) {
       const url = new URL(GAS_API_URL);
       url.searchParams.set('action', action);
@@ -336,8 +350,7 @@
                   品項：${escapeHtml(item.品項 || '-')}<br>
                   分類：${escapeHtml(item.分類 || '-')}<br>
                   券別分類：${escapeHtml(item.category || '-')}<br>
-                  發放方式：${escapeHtml(item.發放方式 || '-')}<br>
-                  領取時間：${escapeHtml(item.claimAt || '-')}<br>
+                  線上領取日期：${escapeHtml(formatClaimDate(item.claimAt || '-'))}<br>
                   啟用日：${escapeHtml(item.activateAt || '-')}<br>
                   到期日：${escapeHtml(item.expireAt || '-')}<br>
                   使用日：${escapeHtml(item.usedAt || '-')}<br>
