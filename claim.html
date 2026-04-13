@@ -174,11 +174,6 @@
         inset 0 0 0 2px rgba(255,255,255,0.12),
         0 10px 18px rgba(198,59,30,0.18);
     }
-    .btn-sub {
-      background: rgba(255,255,255,0.78);
-      color: var(--primary);
-      border: 1px solid rgba(198,59,30,0.12);
-    }
     .btn[disabled] {
       opacity: 0.55;
       cursor: not-allowed;
@@ -234,7 +229,7 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyVZa4f4SM2yA35RGqVS1ij1bM47x88n6Zb_qfLOROCw8NSwTqD-8K_bmFZNY2jCZXz/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw_t0MxD-lz7xy3ik-a-dskJ6lAtKa0M8zZWZo0cBbN2MdCNMbFC0o9JQ3U7ok6eycB/exec';
     const LIFF_ID = '2009551865-EGhyWa2w';
 
     let profileData = { userId: '', displayName: '' };
@@ -284,7 +279,6 @@
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
-
         if (!liff.isLoggedIn()) {
           liff.login({ redirectUri: window.location.href });
           return;
@@ -293,7 +287,6 @@
         const profile = await liff.getProfile();
         profileData.userId = profile.userId || '';
         profileData.displayName = profile.displayName || '';
-
         document.getElementById('displayName').textContent = profileData.displayName || '-';
         document.getElementById('userId').textContent = profileData.userId || '-';
       } catch (err) {
@@ -322,7 +315,6 @@
         }
 
         currentConfig = res.data;
-
         document.getElementById('活動名稱').textContent = currentConfig.活動名稱 || '-';
         document.getElementById('品項').textContent = currentConfig.品項 || '-';
         document.getElementById('分類').textContent = currentConfig.分類 || '-';
@@ -345,7 +337,6 @@
         setMessage('缺少券別資料', true);
         return;
       }
-
       if (!profileData.userId) {
         setMessage('尚未取得使用者資訊', true);
         return;
@@ -371,10 +362,8 @@
         }
 
         setMessage('領取成功');
-
         const successBox = document.getElementById('successBox');
         const successDetail = document.getElementById('successDetail');
-
         successBox.style.display = 'block';
         successDetail.innerHTML = `
           活動名稱：${escapeHtml(res.data.活動類別 || '')}<br>
