@@ -95,7 +95,7 @@
       font-weight: 800;
       color: var(--text);
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
       border: 1.5px solid rgba(168, 88, 55, 0.18);
       background: rgba(145, 108, 92, 0.08);
@@ -106,7 +106,11 @@
       outline: none;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
     }
-    input::placeholder {
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    input::placeholder, textarea::placeholder {
       color: rgba(122, 47, 29, 0.45);
     }
     select {
@@ -328,6 +332,38 @@
       color: #7a2f1d;
       border: 1px solid rgba(198,59,30,0.12);
     }
+    .modal-mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      background: #1f1f1f;
+      color: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+    }
+    .modal-box {
+      width: 100%;
+      height: 120px;
+      border-radius: 14px;
+      border: none;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #2b2b2b;
+      color: #fff;
+      resize: none;
+      margin-top: 12px;
+    }
     @media (max-width: 768px) {
       .grid, .edit-grid {
         grid-template-columns: 1fr;
@@ -409,7 +445,6 @@
 
     <div class="section-card">
       <div class="list-title">已建立券別</div>
-
       <div id="eventFilterRow" class="event-filter-row"></div>
       <div id="simpleList" class="simple-list">
         <div class="item-wrap"><div class="simple-item"><div>讀取中...</div></div></div>
@@ -417,8 +452,19 @@
     </div>
   </div>
 
+  <div id="urlModal" class="modal-mask">
+    <div class="modal-card">
+      <div style="font-size:20px;font-weight:900;margin-bottom:8px;">一次性網址</div>
+      <div style="font-size:14px;opacity:.8;">請長按或全選複製</div>
+      <textarea id="urlText" readonly class="modal-box"></textarea>
+      <div class="button-row" style="margin-top:18px;">
+        <button class="btn btn-main" type="button" onclick="closeUrlModal()">關閉</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw_t0MxD-lz7xy3ik-a-dskJ6lAtKa0M8zZWZo0cBbN2MdCNMbFC0o9JQ3U7ok6eycB/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycby9SHx4npYY6GRf_8PJL8WE4fOr7U6hT66LJvw7GnRmLC4HcNU1HcHmIaBBCXjiTrY/exec';
     const CLAIM_PAGE_BASE_URL = 'https://jia-xiang1.github.io/LINE-1/claim.html';
 
     let couponConfigs = [];
@@ -484,14 +530,12 @@
 
     async function saveConfig() {
       const data = getFormData();
-
       if (!data.活動名稱) return setMessage('請輸入活動名稱', true);
       if (!data.品項) return setMessage('請輸入品項', true);
       if (!data.分類) return setMessage('請輸入分類', true);
       if (!data.couponNameCode) return setMessage('請輸入券別代碼', true);
 
       setMessage('建立中...');
-
       try {
         const res = await apiPost({
           action: 'saveCouponConfig',
@@ -544,7 +588,6 @@
           setMessage((res && res.message) || '更新失敗', true);
           return;
         }
-
         setMessage('更新成功');
         await loadConfigs();
       } catch (err) {
@@ -554,18 +597,15 @@
 
     async function deleteConfig(id) {
       if (!confirm('確定要刪除此券別嗎？')) return;
-
       try {
         const res = await apiPost({
           action: 'deleteCouponConfig',
           configId: id
         });
-
         if (!res || !res.success) {
           setMessage((res && res.message) || '刪除失敗', true);
           return;
         }
-
         setMessage('刪除成功');
         await loadConfigs();
       } catch (err) {
@@ -582,22 +622,29 @@
         });
 
         if (!res || !res.success) {
-          setMessage((res && res.message) || '一次性網址生成失敗', true);
+          setMessage((res && res.message) || '生成失敗', true);
           return;
         }
 
-        const url = res.data.claimUrl || '';
-        const copied = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
-
-        alert(
-          '一次性網址已生成\n\n' +
-          url +
-          '\n\n' +
-          (copied ? '已自動複製到剪貼簿' : '請手動複製')
-        );
+        showOneTimeUrl(res.data.claimUrl || '');
       } catch (err) {
-        setMessage('一次性網址生成失敗：' + err.message, true);
+        setMessage('生成失敗：' + err.message, true);
       }
+    }
+
+    function showOneTimeUrl(url) {
+      const modal = document.getElementById('urlModal');
+      const text = document.getElementById('urlText');
+      text.value = url || '';
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        text.focus();
+        text.select();
+      }, 100);
+    }
+
+    function closeUrlModal() {
+      document.getElementById('urlModal').style.display = 'none';
     }
 
     function getUniqueEventNames(items) {
@@ -606,18 +653,15 @@
 
     function renderEventButtons(eventNames) {
       const container = document.getElementById('eventFilterRow');
-
       if (!eventNames.length) {
         container.innerHTML = '';
         return;
       }
-
       if (eventNames.length === 1) {
         container.innerHTML = '';
         selectedEventName = eventNames[0];
         return;
       }
-
       if (!selectedEventName || !eventNames.includes(selectedEventName)) {
         selectedEventName = eventNames[0];
       }
@@ -693,7 +737,6 @@
     async function renderQrForItem(id) {
       const item = couponConfigs.find(x => x.id === id);
       if (!item || !item.claimUrl) return;
-
       const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
       if (!wrap) return;
 
@@ -768,22 +811,18 @@
                 <label>活動名稱</label>
                 <input data-edit="活動名稱" value="${escapeAttrValue(item.活動名稱 || '')}">
               </div>
-
               <div class="field">
                 <label>品項</label>
                 <input data-edit="品項" value="${escapeAttrValue(item.品項 || '')}">
               </div>
-
               <div class="field">
                 <label>分類</label>
                 <input data-edit="分類" value="${escapeAttrValue(item.分類 || '')}">
               </div>
-
               <div class="field">
                 <label>券別代碼</label>
                 <input data-edit="couponNameCode" value="${escapeAttrValue(item.couponNameCode || '')}">
               </div>
-
               <div class="field">
                 <label>啟用方式</label>
                 <select data-edit="啟用方式">
@@ -791,7 +830,6 @@
                   <option value="隔天啟用" ${item.啟用方式 === '隔天啟用' ? 'selected' : ''}>隔天啟用</option>
                 </select>
               </div>
-
               <div class="field">
                 <label>狀態</label>
                 <select data-edit="status">
@@ -799,10 +837,9 @@
                   <option value="停用" ${item.status === '停用' ? 'selected' : ''}>停用</option>
                 </select>
               </div>
-
               <div class="field full">
                 <label>備註</label>
-                <input data-edit="note" value="${escapeAttrValue(item.note || '')}">
+                <textarea data-edit="note">${escapeHtml(item.note || '')}</textarea>
               </div>
             </div>
 
@@ -820,7 +857,7 @@
 
             <div class="mini-row">
               <button class="mini-btn mini-edit" onclick="event.stopPropagation(); downloadQr('${escapeAttr(item.id)}')">下載 QR</button>
-              <button class="mini-btn mini-edit" onclick="event.stopPropagation(); createOneTimeLink('${escapeAttr(item.id)}')">生成一次性網址</button>
+              <button class="mini-btn mini-edit" onclick="event.stopPropagation(); createOneTimeLink('${escapeAttr(item.id)}')">一次性網址</button>
               <button class="mini-btn mini-edit" onclick="event.stopPropagation(); enableInlineEdit('${escapeAttr(item.id)}')">編輯此券</button>
               <button class="mini-btn mini-delete" onclick="event.stopPropagation(); deleteConfig('${escapeAttr(item.id)}')">刪除此券</button>
               <button class="mini-btn mini-collapse" onclick="event.stopPropagation(); collapseDetail('${escapeAttr(item.id)}')">收起</button>
