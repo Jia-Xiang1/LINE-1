@@ -7,7 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
     * { box-sizing: border-box; }
-
     :root {
       --bg: #f6f0e4;
       --bg-card: rgba(255,255,255,0.55);
@@ -17,7 +16,6 @@
       --border: rgba(198, 59, 30, 0.10);
       --shadow: 0 10px 24px rgba(152, 73, 35, 0.08);
     }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -32,7 +30,6 @@
       position: relative;
       overflow-x: hidden;
     }
-
     body::before {
       content: "";
       position: fixed;
@@ -44,7 +41,6 @@
       background-size: 160px 64px;
       background-repeat: repeat;
     }
-
     .topbar {
       position: sticky;
       top: 0;
@@ -58,7 +54,6 @@
       font-size: 18px;
       letter-spacing: 1px;
     }
-
     .wrap {
       max-width: 860px;
       margin: 0 auto;
@@ -66,7 +61,6 @@
       position: relative;
       z-index: 1;
     }
-
     .section-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -76,7 +70,6 @@
       backdrop-filter: blur(8px);
       margin-bottom: 18px;
     }
-
     .section-title {
       font-size: 28px;
       font-weight: 900;
@@ -84,29 +77,24 @@
       text-align: center;
       margin-bottom: 16px;
     }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 14px;
     }
-
     .field {
       display: flex;
       flex-direction: column;
       gap: 7px;
     }
-
     .field.full {
       grid-column: 1 / -1;
     }
-
     label {
       font-size: 15px;
       font-weight: 800;
       color: var(--text);
     }
-
     input, select {
       width: 100%;
       border: 1.5px solid rgba(168, 88, 55, 0.18);
@@ -118,11 +106,9 @@
       outline: none;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
     }
-
     input::placeholder {
       color: rgba(122, 47, 29, 0.45);
     }
-
     select {
       appearance: none;
       -webkit-appearance: none;
@@ -136,7 +122,6 @@
       background-repeat: no-repeat;
       padding-right: 42px;
     }
-
     .button-row {
       display: flex;
       flex-wrap: wrap;
@@ -144,7 +129,6 @@
       justify-content: center;
       margin-top: 18px;
     }
-
     .btn {
       border: 0;
       border-radius: 999px;
@@ -153,7 +137,6 @@
       font-weight: 900;
       cursor: pointer;
     }
-
     .btn-main {
       min-width: 240px;
       color: white;
@@ -162,13 +145,11 @@
         inset 0 0 0 2px rgba(255,255,255,0.12),
         0 10px 18px rgba(198,59,30,0.18);
     }
-
     .btn-sub {
       background: rgba(255,255,255,0.75);
       color: var(--primary);
       border: 1px solid rgba(198,59,30,0.12);
     }
-
     .msg {
       text-align: center;
       margin-top: 14px;
@@ -177,10 +158,8 @@
       line-height: 1.7;
       min-height: 28px;
     }
-
     .ok { color: #2f855a; }
     .err { color: #c53030; }
-
     .list-title {
       font-size: 24px;
       font-weight: 900;
@@ -188,7 +167,6 @@
       margin-bottom: 14px;
       text-align: center;
     }
-
     .event-filter-row {
       display: flex;
       flex-wrap: wrap;
@@ -196,7 +174,6 @@
       justify-content: center;
       margin-bottom: 16px;
     }
-
     .event-btn {
       border: 0;
       border-radius: 999px;
@@ -208,7 +185,6 @@
       color: var(--primary);
       border: 1px solid rgba(198,59,30,0.12);
     }
-
     .event-btn.active {
       color: white;
       background: linear-gradient(180deg, #d53a20 0%, #c22e19 45%, #c12619 100%);
@@ -216,32 +192,31 @@
         inset 0 0 0 2px rgba(255,255,255,0.12),
         0 10px 18px rgba(198,59,30,0.18);
     }
-
     .simple-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
-
+    .item-wrap {
+      background: rgba(255,255,255,0.50);
+      border: 1px solid rgba(198,59,30,0.08);
+      border-radius: 22px;
+      overflow: hidden;
+    }
     .simple-item {
       display: grid;
       grid-template-columns: 1.2fr 1fr 1fr;
       gap: 10px;
       align-items: center;
       padding: 16px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.50);
-      border: 1px solid rgba(198,59,30,0.08);
       cursor: pointer;
     }
-
     .simple-head {
       font-size: 13px;
       color: var(--text-soft);
       font-weight: 700;
       margin-bottom: 4px;
     }
-
     .simple-value {
       font-size: 18px;
       font-weight: 900;
@@ -249,16 +224,15 @@
       line-height: 1.4;
       word-break: break-word;
     }
-
     .detail-card {
       display: none;
-      margin-top: 14px;
-      background: rgba(255,255,255,0.62);
-      border: 1px solid rgba(198,59,30,0.08);
-      border-radius: 24px;
+      border-top: 1px solid rgba(198,59,30,0.08);
+      background: rgba(255,255,255,0.42);
       padding: 18px;
     }
-
+    .detail-card.open {
+      display: block;
+    }
     .detail-title {
       font-size: 24px;
       font-weight: 900;
@@ -266,7 +240,6 @@
       margin-bottom: 12px;
       text-align: center;
     }
-
     .detail-info {
       line-height: 1.9;
       font-size: 15px;
@@ -274,14 +247,22 @@
       margin-bottom: 14px;
       word-break: break-word;
     }
-
+    .edit-grid {
+      display: none;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .edit-grid.open {
+      display: grid;
+    }
     .qr-panel {
       display: grid;
       grid-template-columns: 240px 1fr;
       gap: 18px;
       align-items: center;
+      margin-top: 12px;
     }
-
     .qr-card {
       background: white;
       border-radius: 28px;
@@ -294,12 +275,10 @@
       min-height: 240px;
       margin: 0 auto;
     }
-
-    #qrCanvas {
+    .qr-canvas {
       width: 210px;
       height: 210px;
     }
-
     .qr-info {
       background: rgba(255,255,255,0.50);
       border-radius: 22px;
@@ -309,8 +288,8 @@
       line-height: 1.85;
       font-size: 14px;
       min-height: 110px;
+      word-break: break-all;
     }
-
     .mini-row {
       display: flex;
       gap: 10px;
@@ -318,7 +297,6 @@
       margin-top: 14px;
       justify-content: center;
     }
-
     .mini-btn {
       border: 0;
       border-radius: 999px;
@@ -327,41 +305,42 @@
       font-weight: 900;
       cursor: pointer;
     }
-
     .mini-edit {
       background: rgba(255,255,255,0.90);
       color: var(--primary);
       border: 1px solid rgba(198,59,30,0.12);
     }
-
     .mini-delete {
       background: #c53030;
       color: white;
     }
-
     .mini-collapse {
       background: rgba(255,255,255,0.90);
       color: #7a2f1d;
       border: 1px solid rgba(198,59,30,0.12);
     }
-
+    .mini-save {
+      background: linear-gradient(180deg, #d53a20 0%, #c22e19 45%, #c12619 100%);
+      color: white;
+    }
+    .mini-cancel {
+      background: rgba(255,255,255,0.90);
+      color: #7a2f1d;
+      border: 1px solid rgba(198,59,30,0.12);
+    }
     @media (max-width: 768px) {
-      .grid {
+      .grid, .edit-grid {
         grid-template-columns: 1fr;
       }
-
       .simple-item {
         grid-template-columns: 1fr;
       }
-
       .qr-panel {
         grid-template-columns: 1fr;
       }
-
       .section-title {
         font-size: 24px;
       }
-
       .simple-value {
         font-size: 17px;
       }
@@ -416,7 +395,7 @@
 
         <div class="field full">
           <label>備註</label>
-          <input id="note" placeholder="例如：現折不可找零" />
+          <input id="note" placeholder="例如：‼️本券可與其他優惠券併用‼️" />
         </div>
       </div>
 
@@ -433,41 +412,16 @@
 
       <div id="eventFilterRow" class="event-filter-row"></div>
       <div id="simpleList" class="simple-list">
-        <div class="simple-item">
-          <div>讀取中...</div>
-        </div>
-      </div>
-
-      <div id="detailCard" class="detail-card">
-        <div class="detail-title">券別詳細資訊</div>
-        <div id="detailInfo" class="detail-info"></div>
-
-        <div class="qr-panel">
-          <div class="qr-card">
-            <canvas id="qrCanvas" width="210" height="210"></canvas>
-          </div>
-          <div class="qr-info" id="qrText">
-            點擊下方品項後，會在此顯示 QR 與詳細資訊。
-          </div>
-        </div>
-
-        <div class="mini-row">
-          <button class="mini-btn mini-edit" onclick="downloadQr()">下載 QR</button>
-          <button class="mini-btn mini-edit" onclick="editCurrent()">編輯此券</button>
-          <button class="mini-btn mini-delete" onclick="deleteCurrent()">刪除此券</button>
-          <button class="mini-btn mini-collapse" onclick="collapseDetail()">收起</button>
-        </div>
+        <div class="item-wrap"><div class="simple-item"><div>讀取中...</div></div></div>
       </div>
     </div>
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyOw_QU9MFpN8CDrEzMoeWasyLwegokiZWhA39Rx3ks-c64WN_dkaJibjtafCDOTJzC/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw_t0MxD-lz7xy3ik-a-dskJ6lAtKa0M8zZWZo0cBbN2MdCNMbFC0o9JQ3U7ok6eycB/exec';
     const CLAIM_PAGE_BASE_URL = 'https://jia-xiang1.github.io/LINE-1/claim.html';
 
     let couponConfigs = [];
-    let currentQrValue = '';
-    let currentItem = null;
     let selectedEventName = '';
 
     function setMessage(text, isError = false) {
@@ -495,18 +449,6 @@
         status: document.getElementById('status').value,
         note: document.getElementById('note').value.trim()
       };
-    }
-
-    function setFormData(item) {
-      document.getElementById('configId').value = item.id || '';
-      document.getElementById('活動名稱').value = item.活動名稱 || '';
-      document.getElementById('品項').value = item.品項 || '';
-      document.getElementById('分類').value = item.分類 || '';
-      document.getElementById('couponNameCode').value = item.couponNameCode || '';
-      document.getElementById('啟用方式').value = item.啟用方式 || '今天啟用';
-      document.getElementById('status').value = item.status || '啟用';
-      document.getElementById('note').value = item.note || '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function resetForm() {
@@ -570,6 +512,46 @@
       }
     }
 
+    async function updateConfigInline(id) {
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+
+      const payload = {
+        action: 'saveCouponConfig',
+        id,
+        活動名稱: wrap.querySelector('[data-edit="活動名稱"]').value.trim(),
+        品項: wrap.querySelector('[data-edit="品項"]').value.trim(),
+        分類: wrap.querySelector('[data-edit="分類"]').value.trim(),
+        eventType: wrap.querySelector('[data-edit="活動名稱"]').value.trim(),
+        couponName: wrap.querySelector('[data-edit="品項"]').value.trim(),
+        category: wrap.querySelector('[data-edit="分類"]').value.trim(),
+        發放方式: 'qr',
+        couponNameCode: wrap.querySelector('[data-edit="couponNameCode"]').value.trim(),
+        啟用方式: wrap.querySelector('[data-edit="啟用方式"]').value,
+        status: wrap.querySelector('[data-edit="status"]').value,
+        note: wrap.querySelector('[data-edit="note"]').value.trim(),
+        claimPageBaseUrl: CLAIM_PAGE_BASE_URL
+      };
+
+      if (!payload.活動名稱) return setMessage('請輸入活動名稱', true);
+      if (!payload.品項) return setMessage('請輸入品項', true);
+      if (!payload.分類) return setMessage('請輸入分類', true);
+      if (!payload.couponNameCode) return setMessage('請輸入券別代碼', true);
+
+      try {
+        const res = await apiPost(payload);
+        if (!res || !res.success) {
+          setMessage((res && res.message) || '更新失敗', true);
+          return;
+        }
+
+        setMessage('更新成功');
+        await loadConfigs();
+      } catch (err) {
+        setMessage('更新失敗：' + err.message, true);
+      }
+    }
+
     async function deleteConfig(id) {
       if (!confirm('確定要刪除此券別嗎？')) return;
 
@@ -585,78 +567,37 @@
         }
 
         setMessage('刪除成功');
-        collapseDetail();
         await loadConfigs();
       } catch (err) {
         setMessage('刪除失敗：' + err.message, true);
       }
     }
 
-    function editCurrent() {
-      if (!currentItem) return;
-      setFormData(currentItem);
-    }
-
-    function deleteCurrent() {
-      if (!currentItem) return;
-      deleteConfig(currentItem.id);
-    }
-
-    function collapseDetail() {
-      document.getElementById('detailCard').style.display = 'none';
-      currentItem = null;
-      currentQrValue = '';
-    }
-
-    async function showDetail(id) {
-      const item = couponConfigs.find(x => x.id === id);
-      if (!item) return;
-
-      currentItem = item;
-      currentQrValue = item.claimUrl || '';
-
-      const detailCard = document.getElementById('detailCard');
-      const detailInfo = document.getElementById('detailInfo');
-      const qrText = document.getElementById('qrText');
-
-      detailInfo.innerHTML = `
-        活動名稱：${escapeHtml(item.活動名稱 || '')}<br>
-        品項：${escapeHtml(item.品項 || '')}<br>
-        分類：${escapeHtml(item.分類 || '')}<br>
-        券別代碼：${escapeHtml(item.couponNameCode || '')}<br>
-        啟用方式：${escapeHtml(item.啟用方式 || '')}<br>
-        狀態：${escapeHtml(item.status || '')}<br>
-        備註：${escapeHtml(item.note || '-')}
-      `;
-
-      qrText.innerHTML = `
-        QR 已建立。<br>
-        活動名稱：${escapeHtml(item.活動名稱 || '')}<br>
-        品項：${escapeHtml(item.品項 || '')}<br>
-        券別代碼：${escapeHtml(item.couponNameCode || '')}
-      `;
-
-      if (currentQrValue) {
-        const canvas = document.getElementById('qrCanvas');
-        await QRCode.toCanvas(canvas, currentQrValue, {
-          width: 210,
-          margin: 1
+    async function createOneTimeLink(configId) {
+      try {
+        const res = await apiPost({
+          action: 'createOneTimeLink',
+          configId,
+          claimPageBaseUrl: CLAIM_PAGE_BASE_URL
         });
+
+        if (!res || !res.success) {
+          setMessage((res && res.message) || '一次性網址生成失敗', true);
+          return;
+        }
+
+        const url = res.data.claimUrl || '';
+        const copied = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
+
+        alert(
+          '一次性網址已生成\n\n' +
+          url +
+          '\n\n' +
+          (copied ? '已自動複製到剪貼簿' : '請手動複製')
+        );
+      } catch (err) {
+        setMessage('一次性網址生成失敗：' + err.message, true);
       }
-
-      detailCard.style.display = 'block';
-      detailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function downloadQr() {
-      const canvas = document.getElementById('qrCanvas');
-      if (!currentQrValue || !currentItem) return setMessage('請先點選品項', true);
-
-      const link = document.createElement('a');
-      const code = currentItem.couponNameCode || 'coupon';
-      link.download = `${code}-qr.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
     }
 
     function getUniqueEventNames(items) {
@@ -682,10 +623,7 @@
       }
 
       container.innerHTML = eventNames.map(name => `
-        <button
-          class="event-btn ${selectedEventName === name ? 'active' : ''}"
-          onclick="selectEvent('${escapeAttr(name)}')"
-        >
+        <button class="event-btn ${selectedEventName === name ? 'active' : ''}" onclick="selectEvent('${escapeAttr(name)}')">
           ${escapeHtml(name)}
         </button>
       `).join('');
@@ -696,18 +634,95 @@
       const eventNames = getUniqueEventNames(couponConfigs);
       renderEventButtons(eventNames);
       renderSimpleList();
-      collapseDetail();
+    }
+
+    function toggleDetail(id) {
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+
+      const detail = wrap.querySelector('.detail-card');
+      const editGrid = wrap.querySelector('.edit-grid');
+
+      document.querySelectorAll('.detail-card').forEach(card => {
+        if (card !== detail) card.classList.remove('open');
+      });
+      document.querySelectorAll('.edit-grid').forEach(grid => {
+        if (grid !== editGrid) grid.classList.remove('open');
+      });
+
+      if (detail.classList.contains('open')) {
+        detail.classList.remove('open');
+        editGrid.classList.remove('open');
+      } else {
+        detail.classList.add('open');
+        editGrid.classList.remove('open');
+        renderQrForItem(id);
+      }
+    }
+
+    function collapseDetail(id) {
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+      wrap.querySelector('.detail-card').classList.remove('open');
+      wrap.querySelector('.edit-grid').classList.remove('open');
+    }
+
+    function enableInlineEdit(id) {
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+      wrap.querySelector('.edit-grid').classList.add('open');
+    }
+
+    function cancelInlineEdit(id) {
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+      wrap.querySelector('.edit-grid').classList.remove('open');
+
+      const item = couponConfigs.find(x => x.id === id);
+      if (!item) return;
+
+      wrap.querySelector('[data-edit="活動名稱"]').value = item.活動名稱 || '';
+      wrap.querySelector('[data-edit="品項"]').value = item.品項 || '';
+      wrap.querySelector('[data-edit="分類"]').value = item.分類 || '';
+      wrap.querySelector('[data-edit="couponNameCode"]').value = item.couponNameCode || '';
+      wrap.querySelector('[data-edit="啟用方式"]').value = item.啟用方式 || '今天啟用';
+      wrap.querySelector('[data-edit="status"]').value = item.status || '啟用';
+      wrap.querySelector('[data-edit="note"]').value = item.note || '';
+    }
+
+    async function renderQrForItem(id) {
+      const item = couponConfigs.find(x => x.id === id);
+      if (!item || !item.claimUrl) return;
+
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+
+      const canvas = wrap.querySelector('.qr-canvas');
+      await QRCode.toCanvas(canvas, item.claimUrl, {
+        width: 210,
+        margin: 1
+      });
+    }
+
+    function downloadQr(id) {
+      const item = couponConfigs.find(x => x.id === id);
+      if (!item) return setMessage('找不到此券', true);
+
+      const wrap = document.getElementById(`item-wrap-${cssSafeId(id)}`);
+      if (!wrap) return;
+
+      const canvas = wrap.querySelector('.qr-canvas');
+      const link = document.createElement('a');
+      link.download = `${item.couponNameCode || 'coupon'}-qr.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
 
     function renderSimpleList() {
       const container = document.getElementById('simpleList');
 
       if (!couponConfigs.length) {
-        container.innerHTML = `
-          <div class="simple-item">
-            <div>目前尚無資料</div>
-          </div>
-        `;
+        container.innerHTML = `<div class="item-wrap"><div class="simple-item"><div>目前尚無資料</div></div></div>`;
         return;
       }
 
@@ -719,18 +734,102 @@
       const visibleItems = couponConfigs.filter(item => item.活動名稱 === selectedEventName);
 
       container.innerHTML = visibleItems.map(item => `
-        <div class="simple-item" onclick="showDetail('${escapeAttr(item.id)}')">
-          <div>
-            <div class="simple-head">活動名稱</div>
-            <div class="simple-value">${escapeHtml(item.活動名稱 || '')}</div>
+        <div class="item-wrap" id="item-wrap-${cssSafeId(item.id)}">
+          <div class="simple-item" onclick="toggleDetail('${escapeAttr(item.id)}')">
+            <div>
+              <div class="simple-head">活動名稱</div>
+              <div class="simple-value">${escapeHtml(item.活動名稱 || '')}</div>
+            </div>
+            <div>
+              <div class="simple-head">品項</div>
+              <div class="simple-value">${escapeHtml(item.品項 || '')}</div>
+            </div>
+            <div>
+              <div class="simple-head">分類</div>
+              <div class="simple-value">${escapeHtml(item.分類 || '')}</div>
+            </div>
           </div>
-          <div>
-            <div class="simple-head">品項</div>
-            <div class="simple-value">${escapeHtml(item.品項 || '')}</div>
-          </div>
-          <div>
-            <div class="simple-head">分類</div>
-            <div class="simple-value">${escapeHtml(item.分類 || '')}</div>
+
+          <div class="detail-card">
+            <div class="detail-title">券別詳細資訊</div>
+
+            <div class="detail-info">
+              活動名稱：${escapeHtml(item.活動名稱 || '')}<br>
+              品項：${escapeHtml(item.品項 || '')}<br>
+              分類：${escapeHtml(item.分類 || '')}<br>
+              券別代碼：${escapeHtml(item.couponNameCode || '')}<br>
+              啟用方式：${escapeHtml(item.啟用方式 || '')}<br>
+              狀態：${escapeHtml(item.status || '')}<br>
+              備註：${escapeHtml(item.note || '-')}
+            </div>
+
+            <div class="edit-grid">
+              <div class="field">
+                <label>活動名稱</label>
+                <input data-edit="活動名稱" value="${escapeAttrValue(item.活動名稱 || '')}">
+              </div>
+
+              <div class="field">
+                <label>品項</label>
+                <input data-edit="品項" value="${escapeAttrValue(item.品項 || '')}">
+              </div>
+
+              <div class="field">
+                <label>分類</label>
+                <input data-edit="分類" value="${escapeAttrValue(item.分類 || '')}">
+              </div>
+
+              <div class="field">
+                <label>券別代碼</label>
+                <input data-edit="couponNameCode" value="${escapeAttrValue(item.couponNameCode || '')}">
+              </div>
+
+              <div class="field">
+                <label>啟用方式</label>
+                <select data-edit="啟用方式">
+                  <option value="今天啟用" ${item.啟用方式 === '今天啟用' ? 'selected' : ''}>今天啟用</option>
+                  <option value="隔天啟用" ${item.啟用方式 === '隔天啟用' ? 'selected' : ''}>隔天啟用</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>狀態</label>
+                <select data-edit="status">
+                  <option value="啟用" ${item.status === '啟用' ? 'selected' : ''}>啟用</option>
+                  <option value="停用" ${item.status === '停用' ? 'selected' : ''}>停用</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>備註</label>
+                <input data-edit="note" value="${escapeAttrValue(item.note || '')}">
+              </div>
+            </div>
+
+            <div class="qr-panel">
+              <div class="qr-card">
+                <canvas class="qr-canvas" width="210" height="210"></canvas>
+              </div>
+              <div class="qr-info">
+                QR 已建立。<br>
+                活動名稱：${escapeHtml(item.活動名稱 || '')}<br>
+                品項：${escapeHtml(item.品項 || '')}<br>
+                券別代碼：${escapeHtml(item.couponNameCode || '')}
+              </div>
+            </div>
+
+            <div class="mini-row">
+              <button class="mini-btn mini-edit" onclick="event.stopPropagation(); downloadQr('${escapeAttr(item.id)}')">下載 QR</button>
+              <button class="mini-btn mini-edit" onclick="event.stopPropagation(); createOneTimeLink('${escapeAttr(item.id)}')">生成一次性網址</button>
+              <button class="mini-btn mini-edit" onclick="event.stopPropagation(); enableInlineEdit('${escapeAttr(item.id)}')">編輯此券</button>
+              <button class="mini-btn mini-delete" onclick="event.stopPropagation(); deleteConfig('${escapeAttr(item.id)}')">刪除此券</button>
+              <button class="mini-btn mini-collapse" onclick="event.stopPropagation(); collapseDetail('${escapeAttr(item.id)}')">收起</button>
+            </div>
+
+            <div class="mini-row">
+              <button class="mini-btn mini-save" onclick="event.stopPropagation(); updateConfigInline('${escapeAttr(item.id)}')">儲存修改</button>
+              <button class="mini-btn mini-cancel" onclick="event.stopPropagation(); cancelInlineEdit('${escapeAttr(item.id)}')">取消編輯</button>
+            </div>
           </div>
         </div>
       `).join('');
@@ -744,11 +843,8 @@
         renderEventButtons(eventNames);
         renderSimpleList();
       } catch (err) {
-        document.getElementById('simpleList').innerHTML = `
-          <div class="simple-item">
-            <div>讀取失敗：${escapeHtml(err.message)}</div>
-          </div>
-        `;
+        document.getElementById('simpleList').innerHTML =
+          `<div class="item-wrap"><div class="simple-item"><div>讀取失敗：${escapeHtml(err.message)}</div></div></div>`;
       }
     }
 
@@ -763,6 +859,18 @@
 
     function escapeAttr(str) {
       return String(str).replaceAll("'", "\\'");
+    }
+
+    function escapeAttrValue(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    function cssSafeId(str) {
+      return String(str).replace(/[^a-zA-Z0-9_-]/g, '_');
     }
 
     loadConfigs();
