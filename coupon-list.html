@@ -7,7 +7,6 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
-
     :root {
       --bg: #f6f0e4;
       --bg-card: rgba(255,255,255,0.56);
@@ -17,7 +16,6 @@
       --border: rgba(198, 59, 30, 0.10);
       --shadow: 0 10px 24px rgba(152, 73, 35, 0.08);
     }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -32,7 +30,6 @@
       position: relative;
       overflow-x: hidden;
     }
-
     body::before {
       content: "";
       position: fixed;
@@ -44,7 +41,6 @@
       background-size: 160px 64px;
       background-repeat: repeat;
     }
-
     .topbar {
       position: sticky;
       top: 0;
@@ -58,7 +54,6 @@
       font-size: 18px;
       letter-spacing: 1px;
     }
-
     .wrap {
       max-width: 760px;
       margin: 0 auto;
@@ -66,12 +61,10 @@
       position: relative;
       z-index: 1;
     }
-
     .hero {
       text-align: center;
       margin-bottom: 18px;
     }
-
     .badge-line {
       display: inline-flex;
       align-items: center;
@@ -80,16 +73,13 @@
       font-size: 15px;
       margin-bottom: 8px;
     }
-
-    .badge-line::before,
-    .badge-line::after {
+    .badge-line::before, .badge-line::after {
       content: "";
       width: 44px;
       height: 2px;
       border-radius: 999px;
       background: rgba(198, 59, 30, 0.5);
     }
-
     .hero-title {
       font-size: 34px;
       line-height: 1.2;
@@ -97,16 +87,12 @@
       color: var(--primary);
       margin-bottom: 8px;
     }
-
     .hero-sub {
       font-size: 15px;
       color: var(--text-soft);
       line-height: 1.7;
     }
-
-    .user-box,
-    .group-card,
-    .empty-card {
+    .user-box, .group-card, .empty-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
@@ -115,13 +101,11 @@
       backdrop-filter: blur(8px);
       margin-bottom: 16px;
     }
-
     .user-box {
       line-height: 1.9;
       font-size: 14px;
       word-break: break-word;
     }
-
     .group-title {
       font-size: 24px;
       font-weight: 900;
@@ -129,20 +113,17 @@
       margin-bottom: 14px;
       text-align: center;
     }
-
     .coupon-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-
     .coupon-card {
       background: rgba(255,255,255,0.45);
       border: 1px solid rgba(198,59,30,0.08);
       border-radius: 22px;
       padding: 14px;
     }
-
     .coupon-head {
       display: flex;
       justify-content: space-between;
@@ -150,14 +131,12 @@
       margin-bottom: 10px;
       align-items: flex-start;
     }
-
     .event-name {
       font-size: 13px;
       color: var(--text-soft);
       font-weight: 700;
       margin-bottom: 4px;
     }
-
     .coupon-name {
       font-size: 21px;
       font-weight: 900;
@@ -165,7 +144,6 @@
       color: var(--primary);
       word-break: break-word;
     }
-
     .pill {
       flex-shrink: 0;
       border-radius: 999px;
@@ -174,12 +152,10 @@
       font-weight: 900;
       white-space: nowrap;
     }
-
     .ready { background: rgba(47,133,90,0.12); color: #2f855a; }
     .pending { background: rgba(180,83,9,0.12); color: #b45309; }
     .used { background: rgba(55,65,81,0.12); color: #374151; }
     .expired { background: rgba(197,48,48,0.10); color: #c53030; }
-
     .info {
       background: rgba(255,255,255,0.48);
       border-radius: 16px;
@@ -189,14 +165,12 @@
       color: var(--text);
       word-break: break-word;
     }
-
     .actions {
       margin-top: 12px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .btn {
       border: 0;
       border-radius: 999px;
@@ -205,7 +179,6 @@
       font-weight: 900;
       cursor: pointer;
     }
-
     .btn-main {
       color: white;
       background: linear-gradient(180deg, #d53a20 0%, #c22e19 45%, #c12619 100%);
@@ -213,29 +186,17 @@
         inset 0 0 0 2px rgba(255,255,255,0.12),
         0 10px 18px rgba(198,59,30,0.18);
     }
-
     .btn-disabled {
       background: rgba(255,255,255,0.70);
       color: rgba(122,47,29,0.55);
       cursor: not-allowed;
       border: 1px solid rgba(198,59,30,0.08);
     }
-
     .empty-card {
       text-align: center;
       color: var(--text-soft);
       line-height: 1.8;
       font-size: 15px;
-    }
-
-    @media (max-width: 640px) {
-      .hero-title {
-        font-size: 28px;
-      }
-
-      .coupon-name {
-        font-size: 18px;
-      }
     }
   </style>
 </head>
@@ -244,7 +205,8 @@
 
   <div class="wrap">
     <div class="hero">
-      <div class="badge-line">我的券包</div>
+      <div class="badge-line">查看已領優惠券</div>
+      <div class="hero-title">券包無誤！立即查看！</div>
       <div class="hero-sub">依券別分類分組，並依到期日排序</div>
     </div>
 
@@ -259,19 +221,15 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyVZa4f4SM2yA35RGqVS1ij1bM47x88n6Zb_qfLOROCw8NSwTqD-8K_bmFZNY2jCZXz/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw_t0MxD-lz7xy3ik-a-dskJ6lAtKa0M8zZWZo0cBbN2MdCNMbFC0o9JQ3U7ok6eycB/exec';
     const LIFF_ID = '2009551865-e6Y0VCE6';
 
     let profileData = { userId: '', displayName: '' };
 
     function formatClaimDate(value) {
       if (!value || value === '-') return '-';
-
       const d = new Date(value);
-      if (isNaN(d.getTime())) {
-        return String(value).split(' ')[0] || String(value);
-      }
-
+      if (isNaN(d.getTime())) return String(value).split(' ')[0] || String(value);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
@@ -299,7 +257,6 @@
 
     async function initLiff() {
       await liff.init({ liffId: LIFF_ID });
-
       if (!liff.isLoggedIn()) {
         liff.login({ redirectUri: window.location.href });
         return;
@@ -373,8 +330,7 @@
 
     async function loadCoupons() {
       if (!profileData.userId) {
-        document.getElementById('couponContainer').innerHTML =
-          `<div class="empty-card">尚未取得使用者資訊</div>`;
+        document.getElementById('couponContainer').innerHTML = `<div class="empty-card">尚未取得使用者資訊</div>`;
         return;
       }
 
