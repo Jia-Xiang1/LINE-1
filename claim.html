@@ -229,7 +229,7 @@
   </div>
 
   <script>
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw_t0MxD-lz7xy3ik-a-dskJ6lAtKa0M8zZWZo0cBbN2MdCNMbFC0o9JQ3U7ok6eycB/exec';
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycby9SHx4npYY6GRf_8PJL8WE4fOr7U6hT66LJvw7GnRmLC4HcNU1HcHmIaBBCXjiTrY/exec';
     const LIFF_ID = '2009551865-EGhyWa2w';
 
     let profileData = { userId: '', displayName: '' };
@@ -287,6 +287,7 @@
         const profile = await liff.getProfile();
         profileData.userId = profile.userId || '';
         profileData.displayName = profile.displayName || '';
+
         document.getElementById('displayName').textContent = profileData.displayName || '-';
         document.getElementById('userId').textContent = profileData.userId || '-';
       } catch (err) {
